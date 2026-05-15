@@ -1,0 +1,4036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MPact Mission Foundation — Nonprofit Formation Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<!-- Google Identity Services -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root {
+  --navy:    #0E0C0A;
+  --navy2:   #181410;
+  --navy3:   #201B16;
+  --navy4:   #282218;
+  --h-blue:    #1B8ED4;
+  --h-teal:    #00B0A2;
+  --h-yellow:  #F0B400;
+  --h-orange:  #E07800;
+  --h-pink:    #D42870;
+  --h-magenta: #9C1878;
+  --h-red:     #C43030;
+  --cyan:    #1B8ED4;
+  --pink:    #D42870;
+  --gold:    #F0B400;
+  --green1:  #00B0A2;
+  --green2:  #00C8A8;
+  --green3:  #00A898;
+  --purple1: #9C1878;
+  --purple2: #7E1460;
+  --purple3: #600E48;
+  --content-bg: #F0EDE7;
+  --card-bg:    #FFFFFF;
+  --text-dark:  #1C2130;
+  --text-mid:   #4A5468;
+  --text-soft:  #7A8598;
+  --border-l:   rgba(28,33,48,0.09);
+  --shadow-card: 0 2px 16px rgba(28,33,48,0.08), 0 0 0 1px rgba(28,33,48,0.06);
+  --white:   #F4F1EC;
+  --muted:   #9098A8;
+  --sidebar-w: 260px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--content-bg);
+  color: var(--text-dark);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+}
+
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  pointer-events:none; z-index:999;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.015;
+}
+
+.glow-tl {
+  position:fixed; width:500px; height:500px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,176,162,0.06) 0%, transparent 70%);
+  top:-150px; left:50px; pointer-events:none;
+  opacity:0;pointer-events:none;
+}
+.glow-br {
+  position:fixed; width:600px; height:600px; border-radius:50%;
+  background:radial-gradient(circle, rgba(156,24,120,0.07) 0%, transparent 70%);
+  bottom:-150px; right:-100px; pointer-events:none;
+  animation: driftB 24s ease-in-out infinite;
+}
+@keyframes driftA { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+@keyframes driftB { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-35px,-25px)} }
+
+/* ══ SIDEBAR ══ */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: var(--sidebar-w); height: 100vh;
+  background: var(--navy2);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  display: flex; flex-direction: column;
+  z-index: 100; overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center; gap: 12px;
+}
+.wm-top {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 3px; line-height: 1;
+}
+.wm-top .m  { color: var(--pink); }
+.wm-top .pact { color: var(--cyan); }
+.wm-sub-text {
+  font-size: 8px; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 3px;
+}
+
+.admin-badge {
+  margin: 16px 24px;
+  padding: 6px 14px; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(212,40,112,0.15), rgba(27,142,212,0.10));
+  border: 1px solid rgba(212,40,112,0.25);
+  display: flex; align-items: center; gap: 7px;
+  width: fit-content;
+}
+.admin-badge .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 6px var(--pink);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.admin-badge span {
+  font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--pink);
+  font-weight: 600;
+}
+.nav-section { padding: 10px 16px 4px; }
+.nav-section-label {
+  font-size: 8px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--muted);
+  font-weight: 600; padding: 0 8px; margin-bottom: 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 10px;
+  cursor: pointer; transition: all 0.2s;
+  font-size: 13px; font-weight: 500;
+  color: var(--muted); position: relative;
+  text-decoration: none;
+}
+.nav-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--white);
+}
+.nav-item.active {
+  background: rgba(0,176,162,0.08);
+  color: var(--green1);
+}
+.nav-item.active::before {
+  content:''; position:absolute; left:0; top:50%;
+  transform:translateY(-50%);
+  width:3px; height:20px;
+  background: linear-gradient(180deg, var(--green1), var(--green2));
+  border-radius:0 2px 2px 0;
+}
+.nav-icon { font-size:15px; width:20px; text-align:center; }
+.nav-badge {
+  margin-left: auto;
+  background: rgba(0,176,162,0.15);
+  color: var(--green1);
+  font-size: 9px; padding: 2px 7px; border-radius: 10px;
+  font-weight: 700;
+}
+.nav-badge.new { background: rgba(212,40,112,0.18); color: var(--pink); }
+.sidebar-footer {
+  margin-top: auto; padding: 20px 24px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-footer p { font-size: 10px; color: var(--muted); line-height: 1.6; }
+
+/* ══ MAIN ══ */
+.main {
+  margin-left: var(--sidebar-w); flex: 1;
+  padding: 0; min-height: 100vh; position: relative; z-index: 1;
+}
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(7,11,23,0.85); backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 0 40px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 600; color: var(--white);
+}
+.topbar-left p { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.topbar-tag {
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; font-weight: 600;
+}
+.tag-nc { background: rgba(27,142,212,0.10); border: 1px solid rgba(27,142,212,0.20); color: var(--cyan); }
+.tag-501 { background: rgba(240,180,0,0.10); border: 1px solid rgba(240,180,0,0.20); color: var(--gold); }
+
+.progress-bar { height: 2px; background: rgba(255,255,255,0.04); }
+.progress-fill {
+  height: 100%; width: 18%;
+  background: linear-gradient(90deg, var(--green1), var(--purple1));
+  transition: width 1s ease;
+}
+
+.content { padding: 36px 40px 80px; }
+
+.sec-divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 56px 0 28px;
+}
+.sec-divider-line {
+  height: 1px; flex: 1;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+}
+.sec-divider-label {
+  font-size: 9px; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--muted);
+  font-weight: 600; white-space: nowrap;
+}
+.sec-divider-icon { font-size: 14px; }
+
+/* ══ NEW: MISSION STATEMENT MODULE ══ */
+.mission-hero {
+  position: relative;
+  background: linear-gradient(135deg, rgba(156,24,120,0.08), rgba(0,176,162,0.05));
+  border: 1px solid rgba(156,24,120,0.15);
+  border-radius: 20px;
+  padding: 32px 36px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  animation: fadeUp 0.6s ease both;
+}
+.mission-hero::before {
+  content:''; position:absolute; top:0; right:0;
+  width: 180px; height: 100%;
+  background: radial-gradient(circle at top right, rgba(156,24,120,0.15), transparent 60%);
+  pointer-events: none;
+}
+.mission-eyebrow {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--purple1); font-weight: 600; margin-bottom: 10px;
+}
+.mission-hero h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 600;
+  margin-bottom: 8px;
+}
+.mission-hero p.subtitle {
+  font-size: 13px; color: var(--muted);
+  max-width: 600px; line-height: 1.6;
+}
+
+.mission-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+}
+.mission-card {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 24px; cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  animation: fadeUp 0.5s ease both;
+}
+.mission-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0,176,162,0.3);
+}
+.mission-card.selected {
+  border-color: var(--green1);
+  background: linear-gradient(180deg, rgba(0,176,162,0.06), var(--navy2));
+  box-shadow: 0 0 0 1px var(--green1), 0 0 30px rgba(0,176,162,0.1);
+}
+.mission-card.selected::after {
+  content: '✓ SELECTED';
+  position: absolute; top: 12px; right: 12px;
+  font-size: 9px; letter-spacing: 1.5px; font-weight: 700;
+  background: var(--green1); color: var(--navy);
+  padding: 3px 8px; border-radius: 6px;
+}
+.option-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px; letter-spacing: 2px;
+  color: var(--purple1); margin-bottom: 6px;
+}
+.option-tag {
+  display: inline-block;
+  font-size: 9px; letter-spacing: 1.5px;
+  padding: 3px 9px; border-radius: 8px;
+  background: rgba(156,24,120,0.10);
+  color: var(--purple1);
+  margin-bottom: 14px; font-weight: 600;
+}
+.mission-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; line-height: 1.55;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--white);
+}
+.mission-meta {
+  display: flex; gap: 12px;
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 10px; color: var(--muted);
+}
+.mission-meta span { display: flex; align-items: center; gap: 4px; }
+.meta-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ══ NEW: BOARD TRACKER ══ */
+.board-tracker {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+.board-list {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 24px;
+  animation: fadeUp 0.5s ease both;
+}
+.board-list h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 600;
+  margin-bottom: 4px;
+}
+.board-list p.sub {
+  font-size: 11px; color: var(--muted);
+  margin-bottom: 18px;
+}
+.board-row {
+  display: grid;
+  grid-template-columns: 38px 1fr auto auto;
+  gap: 14px; align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.board-row:last-child { border-bottom: none; padding-bottom: 0; }
+.board-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px; letter-spacing: 1px;
+  flex-shrink: 0;
+}
+.av-g { background: rgba(0,176,162,0.15); color: var(--green1); border: 1px solid rgba(0,176,162,0.3); }
+.av-p { background: rgba(156,24,120,0.15); color: var(--purple1); border: 1px solid rgba(156,24,120,0.3); }
+.av-c { background: rgba(27,142,212,0.15); color: var(--cyan); border: 1px solid rgba(27,142,212,0.3); }
+.av-k { background: rgba(212,40,112,0.15); color: var(--pink); border: 1px solid rgba(212,40,112,0.3); }
+.av-vacant {
+  background: transparent; color: var(--muted);
+  border: 1.5px dashed rgba(107,122,153,0.4);
+  font-size: 18px;
+}
+
+.board-name {
+  font-size: 13px; font-weight: 600; color: var(--white);
+}
+.board-name.vacant { color: var(--muted); font-weight: 500; font-style: italic; }
+.board-role {
+  font-size: 11px; color: var(--muted);
+  margin-top: 1px;
+}
+.board-term {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px; letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.board-status {
+  font-size: 9px; letter-spacing: 1.5px;
+  padding: 3px 8px; border-radius: 8px;
+  font-weight: 700;
+}
+.bs-active { background: rgba(0,176,162,0.10); color: var(--green1); }
+.bs-pending { background: rgba(240,180,0,0.10); color: var(--gold); }
+.bs-vacant { background: rgba(107,122,153,0.10); color: var(--muted); }
+
+/* Board summary card */
+.board-summary {
+  display: flex; flex-direction: column; gap: 14px;
+}
+.bs-card {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 20px;
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+.bs-card h4 {
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted); margin-bottom: 14px;
+}
+.bs-stat {
+  display: flex; justify-content: space-between;
+  align-items: baseline; padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 12px;
+}
+.bs-stat:last-child { border-bottom: none; }
+.bs-stat-label { color: var(--muted); }
+.bs-stat-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px; letter-spacing: 1px;
+}
+.bs-stat-val.g { color: var(--green1); }
+.bs-stat-val.p { color: var(--purple1); }
+.bs-stat-val.k { color: var(--pink); }
+.bs-stat-val.gold { color: var(--gold); }
+
+.recruit-cta {
+  margin-top: 4px;
+  background: linear-gradient(135deg, rgba(212,40,112,0.10), rgba(156,24,120,0.06));
+  border: 1px solid rgba(212,40,112,0.20);
+  border-radius: 12px; padding: 16px;
+  cursor: pointer; transition: all 0.25s;
+}
+.recruit-cta:hover {
+  border-color: var(--pink);
+  transform: translateY(-1px);
+}
+.recruit-cta-label {
+  font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--pink);
+  font-weight: 700; margin-bottom: 4px;
+}
+.recruit-cta-text {
+  font-size: 13px; font-weight: 500; line-height: 1.4;
+}
+.recruit-cta-arrow { float: right; color: var(--pink); margin-top: 4px; }
+
+/* ══ NEW: FILING DEADLINES ══ */
+.deadlines-grid {
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px;
+}
+.deadline-list {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 24px;
+  animation: fadeUp 0.5s ease both;
+}
+.deadline-list h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 600;
+  margin-bottom: 18px;
+}
+.deadline-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 14px; align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer; transition: background 0.2s;
+}
+.deadline-row:last-child { border-bottom: none; }
+.deadline-row:hover { background: rgba(255,255,255,0.02); }
+.deadline-date {
+  text-align: center;
+  background: var(--navy3);
+  border-radius: 10px;
+  padding: 8px 4px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.deadline-date.urgent { border-color: rgba(212,40,112,0.4); background: rgba(212,40,112,0.06); }
+.deadline-date.soon { border-color: rgba(240,180,0,0.4); background: rgba(240,180,0,0.06); }
+.dd-month {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 10px; letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.deadline-date.urgent .dd-month { color: var(--pink); }
+.deadline-date.soon .dd-month { color: var(--gold); }
+.dd-day {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; line-height: 1;
+  color: var(--white);
+}
+.deadline-title {
+  font-size: 13px; font-weight: 500; color: var(--white);
+}
+.deadline-meta {
+  font-size: 10px; color: var(--muted);
+  margin-top: 2px;
+  display: flex; gap: 10px; align-items: center;
+}
+.deadline-pill {
+  font-size: 9px; letter-spacing: 1px;
+  padding: 3px 7px; border-radius: 6px; font-weight: 600;
+}
+.dp-urgent { background: rgba(212,40,112,0.12); color: var(--pink); }
+.dp-soon { background: rgba(240,180,0,0.12); color: var(--gold); }
+.dp-future { background: rgba(0,176,162,0.10); color: var(--green1); }
+.dp-recurring { background: rgba(156,24,120,0.10); color: var(--purple1); }
+
+.deadline-action {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 10px; letter-spacing: 1.5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Calendar widget */
+.cal-widget {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 22px;
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+.cal-widget h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 600; margin-bottom: 4px;
+}
+.cal-widget p.sub {
+  font-size: 11px; color: var(--muted); margin-bottom: 18px;
+}
+.cal-month {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px; margin-bottom: 16px;
+}
+.cal-day-header {
+  font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted); text-align: center;
+  font-weight: 700;
+  padding: 4px 0;
+}
+.cal-day {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  position: relative;
+  color: var(--muted);
+}
+.cal-day.in-month { color: var(--white); background: rgba(255,255,255,0.02); }
+.cal-day.today {
+  background: rgba(0,176,162,0.15);
+  border-color: var(--green1);
+  font-weight: 700; color: var(--green1);
+}
+.cal-day.event {
+  background: rgba(212,40,112,0.10);
+  border-color: rgba(212,40,112,0.3);
+  color: var(--pink); font-weight: 700;
+}
+.cal-day.event::after {
+  content:'';
+  position:absolute; bottom:3px; left:50%;
+  transform: translateX(-50%);
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--pink);
+}
+.cal-legend {
+  display: flex; gap: 12px;
+  flex-wrap: wrap;
+  font-size: 10px; color: var(--muted);
+}
+.cal-legend-item { display: flex; align-items: center; gap: 5px; }
+.cal-legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* ══ NEW: DOCUMENT VAULT ══ */
+.vault-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.vault-card {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.25s;
+  animation: fadeUp 0.5s ease both;
+  position: relative;
+  overflow: hidden;
+}
+.vault-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.12);
+}
+.vault-icon {
+  width: 36px; height: 44px;
+  border-radius: 6px;
+  display: flex; align-items: flex-end; justify-content: center;
+  margin-bottom: 14px;
+  position: relative;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 9px; letter-spacing: 1px;
+  padding-bottom: 6px;
+  color: rgba(255,255,255,0.85);
+}
+.vi-g { background: linear-gradient(160deg, rgba(0,176,162,0.5), rgba(0,176,162,0.15)); }
+.vi-p { background: linear-gradient(160deg, rgba(156,24,120,0.5), rgba(156,24,120,0.15)); }
+.vi-c { background: linear-gradient(160deg, rgba(27,142,212,0.5), rgba(27,142,212,0.15)); }
+.vi-k { background: linear-gradient(160deg, rgba(212,40,112,0.5), rgba(212,40,112,0.15)); }
+.vi-gold { background: linear-gradient(160deg, rgba(240,180,0,0.5), rgba(240,180,0,0.15)); }
+.vault-icon::before {
+  content:''; position:absolute; top:0; right:0;
+  width: 0; height: 0;
+  border-style: solid; border-width: 0 8px 8px 0;
+  border-color: transparent rgba(255,255,255,0.1) transparent transparent;
+}
+.vault-name {
+  font-size: 12px; font-weight: 600;
+  color: var(--white);
+  line-height: 1.3; margin-bottom: 6px;
+}
+.vault-meta {
+  font-size: 10px; color: var(--muted);
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.vault-status {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 9px; letter-spacing: 1px;
+  font-weight: 700; padding: 2px 7px; border-radius: 6px;
+  margin-top: 8px;
+}
+.vs-ready { background: rgba(0,176,162,0.10); color: var(--green1); }
+.vs-draft { background: rgba(240,180,0,0.10); color: var(--gold); }
+.vs-todo { background: rgba(107,122,153,0.10); color: var(--muted); }
+
+/* ══ NEW: SUGGESTED MODULES ══ */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.module-suggest {
+  background: var(--navy2);
+  border: 1px dashed rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 22px;
+  cursor: pointer; transition: all 0.25s;
+  position: relative;
+  animation: fadeUp 0.5s ease both;
+}
+.module-suggest:hover {
+  border-color: var(--cyan);
+  border-style: solid;
+  background: linear-gradient(180deg, rgba(27,142,212,0.04), var(--navy2));
+}
+.ms-priority {
+  position: absolute; top: 14px; right: 14px;
+  font-size: 9px; letter-spacing: 1.5px;
+  font-weight: 700; padding: 2px 7px; border-radius: 6px;
+}
+.prio-high { background: rgba(212,40,112,0.12); color: var(--pink); }
+.prio-mid  { background: rgba(240,180,0,0.12); color: var(--gold); }
+.prio-low  { background: rgba(107,122,153,0.12); color: var(--muted); }
+
+.ms-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.04);
+}
+.ms-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 700;
+  margin-bottom: 6px;
+}
+.ms-desc {
+  font-size: 11px; color: var(--muted);
+  line-height: 1.5;
+}
+.ms-tag-row {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.ms-tag {
+  font-size: 9px; letter-spacing: 0.5px;
+  padding: 2px 7px; border-radius: 6px;
+  background: rgba(255,255,255,0.04); color: var(--muted);
+}
+
+/* ── STAT CARDS (kept condensed) ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  animation: fadeUp 0.6s ease both;
+}
+.stat-card {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px; padding: 20px;
+  position: relative; overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.stat-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.1); }
+.stat-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background: var(--accent-grad, linear-gradient(90deg, transparent, rgba(0,176,162,0.4), transparent));
+}
+.stat-card.green::before { --accent-grad: linear-gradient(90deg, transparent, rgba(0,176,162,0.5), transparent); }
+.stat-card.purple::before { --accent-grad: linear-gradient(90deg, transparent, rgba(156,24,120,0.5), transparent); }
+.stat-card.pink::before { --accent-grad: linear-gradient(90deg, transparent, rgba(212,40,112,0.5), transparent); }
+.stat-card.gold::before { --accent-grad: linear-gradient(90deg, transparent, rgba(240,180,0,0.5), transparent); }
+.stat-icon { font-size: 22px; margin-bottom: 12px; }
+.stat-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px; letter-spacing: 1px; line-height: 1;
+}
+.stat-card.green .stat-val { color: var(--green1); }
+.stat-card.purple .stat-val { color: var(--purple1); }
+.stat-card.pink .stat-val { color: var(--pink); }
+.stat-card.gold .stat-val { color: var(--gold); }
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+/* Section nav header */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.section-header .new-pill {
+  font-size: 9px; letter-spacing: 2px; font-weight: 700;
+  background: linear-gradient(90deg, var(--green1), var(--purple1));
+  color: var(--navy);
+  padding: 3px 8px; border-radius: 6px;
+}
+
+/* Footer */
+.dash-footer {
+  margin-top: 60px; padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.dash-footer p { font-size: 10px; color: var(--muted); }
+
+/* ══ NEW: PHASE PROGRESS JOURNEY ══ */
+.phase-journey {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.6s ease both;
+}
+.pj-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.pj-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 600;
+}
+.pj-title-sub {
+  font-size: 11px; color: var(--muted);
+  margin-top: 2px;
+}
+.pj-overall {
+  text-align: right;
+}
+.pj-overall-pct {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 1px;
+  background: linear-gradient(90deg, var(--green1), var(--purple1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.pj-overall-label {
+  font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 2px;
+}
+
+.pj-track {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  position: relative;
+}
+.pj-track::before {
+  content:''; position: absolute;
+  top: 18px; left: 10%; right: 10%;
+  height: 2px;
+  background: rgba(255,255,255,0.08);
+  z-index: 0;
+}
+.pj-track::after {
+  content:''; position: absolute;
+  top: 18px; left: 10%;
+  width: 18%; /* fills based on progress */
+  height: 2px;
+  background: linear-gradient(90deg, var(--green1), var(--purple1));
+  z-index: 1;
+  border-radius: 2px;
+}
+
+.pj-step {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  cursor: pointer;
+}
+.pj-dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--navy3);
+  border: 2px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px; color: var(--muted);
+  margin-bottom: 10px;
+  transition: all 0.3s;
+  position: relative;
+}
+.pj-step.complete .pj-dot {
+  background: rgba(0,176,162,0.15);
+  border-color: var(--green1);
+  color: var(--green1);
+}
+.pj-step.complete .pj-dot::after {
+  content:'✓';
+  position: absolute;
+  font-size: 16px;
+}
+.pj-step.complete .pj-dot span { display: none; }
+.pj-step.active .pj-dot {
+  background: rgba(156,24,120,0.18);
+  border-color: var(--purple1);
+  color: var(--purple1);
+  box-shadow: 0 0 0 4px rgba(156,24,120,0.10), 0 0 20px rgba(156,24,120,0.25);
+  animation: pulse-active 2.5s ease-in-out infinite;
+}
+@keyframes pulse-active {
+  0%,100% { box-shadow: 0 0 0 4px rgba(156,24,120,0.10), 0 0 20px rgba(156,24,120,0.25); }
+  50%     { box-shadow: 0 0 0 8px rgba(156,24,120,0.05), 0 0 30px rgba(156,24,120,0.4); }
+}
+.pj-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--white); margin-bottom: 2px;
+}
+.pj-step.complete .pj-label { color: var(--green1); }
+.pj-step.active .pj-label { color: var(--purple1); }
+.pj-step.future .pj-label { color: var(--muted); }
+.pj-sublabel {
+  font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted);
+  font-weight: 600;
+}
+.pj-pct {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px; letter-spacing: 1px;
+  margin-top: 4px;
+}
+.pj-step.complete .pj-pct { color: var(--green1); }
+.pj-step.active .pj-pct { color: var(--purple1); }
+.pj-step.future .pj-pct { color: var(--muted); }
+
+
+/* ══ NEW: QUICK ACTIONS HUB ══ */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+.qa-card {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.qa-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--qa-color, var(--green1));
+}
+.qa-card::before {
+  content:''; position: absolute;
+  top: 0; left: 0; bottom: 0; width: 3px;
+  background: var(--qa-color, var(--green1));
+}
+.qa-card.urgent { --qa-color: var(--pink); }
+.qa-card.next   { --qa-color: var(--green1); }
+.qa-card.soon   { --qa-color: var(--gold); }
+.qa-card.queue  { --qa-color: var(--purple1); }
+
+.qa-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.qa-priority {
+  font-size: 9px; letter-spacing: 1.5px;
+  text-transform: uppercase; font-weight: 700;
+  padding: 2px 7px; border-radius: 6px;
+}
+.qa-card.urgent .qa-priority { background: rgba(212,40,112,0.12); color: var(--pink); }
+.qa-card.next   .qa-priority { background: rgba(0,176,162,0.12); color: var(--green1); }
+.qa-card.soon   .qa-priority { background: rgba(240,180,0,0.12); color: var(--gold); }
+.qa-card.queue  .qa-priority { background: rgba(156,24,120,0.12); color: var(--purple1); }
+
+.qa-icon { font-size: 22px; }
+.qa-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--white); line-height: 1.3;
+  margin-bottom: 6px;
+}
+.qa-desc {
+  font-size: 11px; color: var(--muted);
+  line-height: 1.5;
+}
+.qa-meta {
+  display: flex; gap: 10px;
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 10px;
+}
+.qa-meta-item { color: var(--muted); }
+.qa-meta-item.bold {
+  color: var(--qa-color, var(--white));
+  font-weight: 700;
+}
+
+/* ══ NEW: FORM 1023-EZ ELIGIBILITY CHECKER ══ */
+.eligibility {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+.elig-card {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 28px;
+  animation: fadeUp 0.5s ease both;
+}
+.elig-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 600;
+  margin-bottom: 6px;
+}
+.elig-card p.sub {
+  font-size: 12px; color: var(--muted);
+  margin-bottom: 22px; line-height: 1.5;
+}
+
+.elig-q {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.elig-q:last-of-type { border-bottom: none; }
+.elig-q-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: rgba(156,24,120,0.10);
+  color: var(--purple1);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12px; letter-spacing: 1px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(156,24,120,0.20);
+}
+.elig-q-body { flex: 1; }
+.elig-q-text {
+  font-size: 13px; color: var(--white);
+  line-height: 1.45; margin-bottom: 8px;
+}
+.elig-toggle {
+  display: inline-flex; gap: 4px;
+  background: var(--navy3);
+  border-radius: 8px;
+  padding: 3px;
+}
+.elig-btn {
+  padding: 6px 14px; font-size: 11px;
+  font-weight: 600; letter-spacing: 0.5px;
+  border-radius: 6px; cursor: pointer;
+  background: transparent; border: none;
+  color: var(--muted); transition: all 0.2s;
+}
+.elig-btn.yes.active { background: rgba(0,176,162,0.15); color: var(--green1); }
+.elig-btn.no.active  { background: rgba(212,40,112,0.15); color: var(--pink); }
+
+/* Result panel */
+.elig-result {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 28px;
+  display: flex; flex-direction: column;
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+.elig-result h4 {
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 14px;
+}
+.elig-verdict-card {
+  background: linear-gradient(135deg, rgba(0,176,162,0.06), rgba(156,24,120,0.04));
+  border: 1px solid rgba(0,176,162,0.2);
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 18px;
+  transition: all 0.3s;
+}
+.elig-verdict-card.eligible {
+  background: linear-gradient(135deg, rgba(0,176,162,0.08), rgba(0,176,162,0.02));
+  border-color: rgba(0,176,162,0.35);
+}
+.elig-verdict-card.ineligible {
+  background: linear-gradient(135deg, rgba(240,180,0,0.08), rgba(212,40,112,0.04));
+  border-color: rgba(240,180,0,0.30);
+}
+.elig-verdict-icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+.elig-verdict-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+.elig-verdict-card.eligible .elig-verdict-title { color: var(--green1); }
+.elig-verdict-card.ineligible .elig-verdict-title { color: var(--gold); }
+.elig-verdict-sub {
+  font-size: 11px; color: var(--muted);
+  line-height: 1.5;
+}
+.elig-summary {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 16px;
+}
+.elig-stat {
+  background: var(--navy3);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.elig-stat-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; line-height: 1;
+}
+.elig-stat-val.fee { color: var(--gold); }
+.elig-stat-val.time { color: var(--cyan); }
+.elig-stat-label {
+  font-size: 9px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 4px;
+}
+.elig-progress-row {
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--muted);
+  margin-top: auto; padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ══ NEW: ACTIVITY FEED ══ */
+.activity-wrapper {
+  background: var(--navy2);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 24px;
+  animation: fadeUp 0.5s ease both;
+}
+.activity-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.activity-header h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 600;
+}
+.activity-filter {
+  display: flex; gap: 6px;
+}
+.af-btn {
+  font-size: 10px; letter-spacing: 1px;
+  padding: 5px 10px; border-radius: 6px;
+  background: var(--navy3); color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer; transition: all 0.2s;
+  font-weight: 600;
+}
+.af-btn.active {
+  background: rgba(0,176,162,0.10);
+  color: var(--green1);
+  border-color: rgba(0,176,162,0.25);
+}
+
+.activity-item {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 14px; align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+.act-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.ai-create { background: rgba(0,176,162,0.10); color: var(--green1); }
+.ai-update { background: rgba(27,142,212,0.10); color: var(--cyan); }
+.ai-action { background: rgba(156,24,120,0.10); color: var(--purple1); }
+.ai-alert  { background: rgba(212,40,112,0.10); color: var(--pink); }
+.ai-system { background: rgba(240,180,0,0.10); color: var(--gold); }
+
+.act-content {
+  font-size: 12px; color: var(--white);
+  line-height: 1.5;
+}
+.act-content strong { color: var(--white); font-weight: 600; }
+.act-content .act-tag {
+  display: inline-block;
+  font-size: 9px; letter-spacing: 1px;
+  padding: 2px 6px; border-radius: 5px;
+  margin-left: 4px; font-weight: 600;
+  text-transform: uppercase;
+}
+.tag-doc { background: rgba(27,142,212,0.10); color: var(--cyan); }
+.tag-mod { background: rgba(156,24,120,0.10); color: var(--purple1); }
+.tag-sys { background: rgba(240,180,0,0.10); color: var(--gold); }
+.act-meta {
+  font-size: 10px; color: var(--muted);
+  margin-top: 4px;
+}
+.act-time {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 10px; letter-spacing: 1px;
+  color: var(--muted); white-space: nowrap;
+  text-align: right;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+@media (max-width: 1100px) {
+  .mission-grid, .roles-grid, .modules-grid, .vault-grid, .quick-actions { grid-template-columns: 1fr 1fr; }
+  .board-tracker, .deadlines-grid, .eligibility { grid-template-columns: 1fr; }
+  .pj-track { grid-template-columns: repeat(3, 1fr); }
+  .pj-step.future:nth-child(n+4) { display: none; }
+}
+/* ══ AUTH GATE ══ */
+#authGate {
+  position: fixed; inset: 0; z-index: 9000;
+  background: radial-gradient(ellipse at 30% 40%, rgba(0,176,162,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 70%, rgba(156,24,120,0.07) 0%, transparent 55%),
+              linear-gradient(160deg, #070B17 0%, #0C1121 60%, #111827 100%);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.auth-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 48px 52px;
+  width: 420px; max-width: 92vw;
+  text-align: center;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+}
+.auth-logo { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 4px; }
+.auth-logo .m { color: #CC1155; } .auth-logo .pact { color: #00D4FF; }
+.auth-org { font-size: 11px; letter-spacing: 4px; color: var(--green1); font-weight: 700; margin-bottom: 6px; }
+.auth-city { font-size: 10px; color: var(--muted); letter-spacing: 2px; margin-bottom: 32px; }
+.auth-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.auth-sub { font-size: 12px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+.auth-divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 24px 0; }
+.auth-status {
+  font-size: 11px; color: var(--muted); margin-top: 18px;
+  min-height: 16px; transition: color 0.2s;
+}
+.auth-status.error { color: var(--pink); }
+.auth-status.checking { color: var(--gold); }
+.auth-status.ok { color: var(--green1); }
+.auth-denied {
+  background: rgba(212,40,112,0.08); border: 1px solid rgba(212,40,112,0.2);
+  border-radius: 10px; padding: 14px 18px; margin-top: 18px;
+  font-size: 12px; color: var(--pink); text-align: left; display: none;
+}
+.auth-denied strong { display: block; margin-bottom: 4px; }
+#authSignInDiv { display: flex; justify-content: center; }
+
+/* ══ USER BAR (post-auth) ══ */
+.user-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 16px 0 0;
+  border-left: 1px solid rgba(255,255,255,0.07);
+  margin-left: 8px;
+}
+.user-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--green1), var(--purple1));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #000; flex-shrink: 0;
+  overflow: hidden;
+}
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-info { line-height: 1.3; }
+.user-name { font-size: 11px; font-weight: 700; color: #fff; }
+.user-email { font-size: 9px; color: var(--muted); }
+.user-badge {
+  font-size: 8px; font-weight: 800; letter-spacing: 1px; padding: 2px 6px;
+  border-radius: 6px; background: rgba(0,176,162,0.12);
+  border: 1px solid rgba(0,176,162,0.3); color: var(--green1);
+}
+.user-badge.super { background: rgba(240,180,0,0.12); border-color: rgba(240,180,0,0.3); color: var(--gold); }
+.signout-btn {
+  font-size: 9px; color: var(--muted); cursor: pointer; padding: 3px 7px;
+  border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);
+  background: transparent; transition: all 0.15s; letter-spacing: 0.5px;
+}
+.signout-btn:hover { color: var(--pink); border-color: rgba(212,40,112,0.3); }
+
+/* ══ SYNC INDICATOR ══ */
+.sync-indicator {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 9px; color: var(--muted); letter-spacing: 0.5px;
+}
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
+.sync-dot.live { background: var(--green1); animation: pulse 2s infinite; }
+.sync-dot.saving { background: var(--gold); }
+.sync-dot.error { background: var(--pink); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ══ ADMIN PANEL ══ */
+.admin-panel-btn {
+  font-size: 9px; font-weight: 700; letter-spacing: 1px; padding: 4px 10px;
+  border-radius: 8px; border: 1px solid rgba(240,180,0,0.3);
+  background: rgba(240,180,0,0.08); color: var(--gold);
+  cursor: pointer; display: none; text-transform: uppercase;
+}
+.admin-panel-btn:hover { background: rgba(240,180,0,0.15); }
+#adminModal {
+  position: fixed; inset: 0; z-index: 8000; display: none;
+  background: rgba(7,11,23,0.88); backdrop-filter: blur(8px);
+  align-items: flex-start; justify-content: center; padding-top: 60px;
+  overflow-y: auto;
+}
+#adminModal.open { display: flex; }
+.admin-modal-card {
+  background: linear-gradient(180deg, #111827, #0C1121);
+  border: 1px solid rgba(240,180,0,0.2);
+  border-radius: 18px; width: 780px; max-width: 96vw;
+  padding: 32px; margin-bottom: 40px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+}
+.admin-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.admin-modal-title { font-size: 18px; font-weight: 700; color: var(--gold); }
+.admin-modal-close {
+  font-size: 18px; cursor: pointer; color: var(--muted); line-height: 1;
+  padding: 4px 8px; border-radius: 8px; transition: color 0.15s;
+}
+.admin-modal-close:hover { color: var(--pink); }
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 12px; }
+.admin-tab { font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 5px 14px;
+  border-radius: 8px; border: 1px solid transparent; color: var(--muted);
+  cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+.admin-tab.active { background: rgba(240,180,0,0.1); border-color: rgba(240,180,0,0.25); color: var(--gold); }
+.admin-tab:hover:not(.active) { color: #fff; border-color: rgba(255,255,255,0.1); }
+.admin-tab-pane { display: none; }
+.admin-tab-pane.active { display: block; }
+
+/* User table */
+.user-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.user-table th {
+  text-align: left; padding: 8px 10px; font-size: 9px; font-weight: 700;
+  letter-spacing: 1px; color: var(--muted); text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.user-table td { padding: 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+.user-table tr:hover td { background: rgba(255,255,255,0.02); }
+.user-role-select {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: #fff; border-radius: 6px; padding: 3px 6px; font-size: 10px; cursor: pointer;
+}
+.user-del-btn {
+  background: transparent; border: 1px solid rgba(212,40,112,0.2);
+  color: var(--pink); border-radius: 6px; padding: 3px 8px; cursor: pointer;
+  font-size: 9px; font-weight: 700; transition: all 0.15s; letter-spacing: 0.5px;
+}
+.user-del-btn:hover { background: rgba(212,40,112,0.12); }
+.user-status-badge { font-size: 8px; font-weight: 700; padding: 2px 7px; border-radius: 6px; letter-spacing: 0.5px; }
+.us-active { background: rgba(0,176,162,0.1); color: var(--green1); }
+.us-disabled { background: rgba(212,40,112,0.1); color: var(--pink); }
+.us-super { background: rgba(240,180,0,0.12); color: var(--gold); }
+
+/* Add user form */
+.add-user-form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; margin-top: 16px; }
+.afu-field label { font-size: 9px; color: var(--muted); letter-spacing: 1px; display: block; margin-bottom: 5px; font-weight: 700; }
+.afu-field input, .afu-field select {
+  width: 100%; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+  color: #fff; padding: 8px 10px; font-size: 11px;
+  box-sizing: border-box;
+}
+.afu-field input:focus, .afu-field select:focus { outline: none; border-color: rgba(0,176,162,0.4); }
+.afu-submit {
+  background: rgba(0,176,162,0.1); border: 1px solid rgba(0,176,162,0.3);
+  color: var(--green1); border-radius: 8px; padding: 9px 16px;
+  cursor: pointer; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  transition: all 0.15s; white-space: nowrap;
+}
+.afu-submit:hover { background: rgba(0,176,162,0.18); }
+
+/* Activity log table */
+.log-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.log-table th { text-align: left; padding: 6px 8px; font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.log-table td { padding: 8px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--muted); }
+.log-table td:first-child { color: #fff; font-weight: 600; }
+
+/* Sync status bar */
+.sync-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); }
+.sync-bar-text { font-size: 10px; color: var(--muted); flex: 1; }
+.sync-refresh-btn { font-size: 9px; font-weight: 700; padding: 3px 10px; border-radius: 6px; border: 1px solid rgba(0,176,162,0.2); background: transparent; color: var(--green1); cursor: pointer; }
+
+/* HOUSING THEME */
+.housing-row{display:flex;align-items:flex-end;gap:5px;padding:0 40px;height:56px;overflow:hidden;position:relative;background:transparent}
+.housing-row::after{content:'';position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(to top,var(--content-bg),transparent);z-index:2;pointer-events:none}
+.hbar{flex-shrink:0;border-radius:3px 3px 0 0;opacity:.82;transition:transform .35s ease}
+.hbar:hover{transform:translateY(-5px)}
+.hb1{width:20px;height:30px;background:#0E5FA8}.hb2{width:20px;height:40px;background:#1B8ED4}
+.hb3{width:20px;height:34px;background:#00B0A2}.hb4{width:20px;height:24px;background:#7AC800}
+.hb5{width:20px;height:46px;background:#F0B400}.hb6{width:20px;height:38px;background:#E07800}
+.hb7{width:20px;height:28px;background:#C43030}.hb8{width:20px;height:50px;background:#D42870}
+.hb9{width:20px;height:34px;background:#9C1878}.hb10{width:20px;height:44px;background:#700E60}
+.hb11{width:16px;height:26px;background:#1B8ED4;opacity:.45}.hb12{width:16px;height:34px;background:#F0B400;opacity:.45}
+.hb13{width:16px;height:22px;background:#D42870;opacity:.45}.hb14{width:16px;height:30px;background:#00B0A2;opacity:.45}
+.hb15{width:16px;height:38px;background:#9C1878;opacity:.45}.hb16{width:16px;height:26px;background:#E07800;opacity:.45}
+.hb17{width:14px;height:18px;background:#F0B400;opacity:.28}.hb18{width:14px;height:28px;background:#1B8ED4;opacity:.28}
+.hb19{width:14px;height:22px;background:#D42870;opacity:.28}.hb20{width:14px;height:32px;background:#00B0A2;opacity:.28}
+
+.main{background:var(--content-bg)!important}
+.content{background:var(--content-bg)}
+
+.sidebar{background:linear-gradient(180deg,#0E0C0A 0%,#181410 100%)!important;border-right:1px solid rgba(240,180,0,0.08)!important}
+.sidebar-brand{border-bottom:1px solid rgba(240,180,0,0.1)!important}
+.nav-item{color:#9098A8!important}
+.nav-item:hover,.nav-item.active{background:rgba(240,180,0,0.08)!important;color:#F0B400!important;border-left-color:#F0B400!important}
+.nav-group-label{color:rgba(240,180,0,0.35)!important}
+.nav-divider{border-color:rgba(240,180,0,0.07)!important}
+
+.topbar{background:linear-gradient(135deg,#1C1610 0%,#0E0C0A 100%)!important;border-bottom:1px solid rgba(240,180,0,0.12)!important;position:sticky!important;position:relative!important}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1B8ED4 0%,#00B0A2 14%,#7AC800 28%,#F0B400 42%,#E07800 56%,#C43030 70%,#D42870 84%,#9C1878 100%);opacity:.7}
+.topbar-left h1{color:#F4F0E8!important}
+.topbar-left p{color:rgba(244,240,232,0.5)!important}
+.tag-nc{background:rgba(27,142,212,0.15)!important;border-color:rgba(27,142,212,0.25)!important;color:#1B8ED4!important}
+.tag-501{background:rgba(240,180,0,0.15)!important;border-color:rgba(240,180,0,0.25)!important;color:#F0B400!important}
+
+.role-bar{background:linear-gradient(90deg,#1C1610,#181410)!important;border-bottom:1px solid rgba(240,180,0,0.08)!important}
+.role-pill{color:#9098A8!important;border-color:rgba(255,255,255,0.08)!important}
+.role-pill:hover{color:#fff!important}
+.role-pill.active{background:rgba(240,180,0,0.1)!important;border-color:#F0B400!important;color:#F0B400!important}
+.role-pill[data-role="legal"].active{background:rgba(156,24,120,0.1)!important;border-color:#9C1878!important;color:#9C1878!important}
+.role-pill[data-role="secretary"].active{background:rgba(27,142,212,0.1)!important;border-color:#1B8ED4!important;color:#1B8ED4!important}
+.role-pill[data-role="observer"].active{background:rgba(212,40,112,0.1)!important;border-color:#D42870!important;color:#D42870!important}
+#sessionRole,#sessionTime{color:rgba(244,240,232,0.7)!important}
+#syncLabel{color:rgba(244,240,232,0.5)!important}
+.user-name{color:#F4F0E8!important}.user-email{color:rgba(244,240,232,0.5)!important}
+.user-badge.super{background:rgba(240,180,0,0.12)!important;border-color:rgba(240,180,0,0.3)!important;color:#F0B400!important}
+
+.progress-bar{background:rgba(255,255,255,0.06)!important}
+.progress-fill{background:linear-gradient(90deg,#1B8ED4,#F0B400,#D42870)!important}
+
+.sec-divider-label{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:17px!important;color:var(--text-dark)!important;letter-spacing:0!important;text-transform:none!important}
+.sec-divider-icon{font-size:16px!important}
+.sec-divider-line{border-color:rgba(28,33,48,0.12)!important}
+
+.stat-card{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.stat-card.green{border-top:3px solid #00B0A2!important}
+.stat-card.purple{border-top:3px solid #9C1878!important}
+.stat-card.gold{border-top:3px solid #F0B400!important}
+.stat-card.pink{border-top:3px solid #D42870!important}
+.stat-val{color:var(--text-dark)!important}
+.stat-label{color:var(--text-mid)!important}
+
+.phase-journey{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.pj-title{color:var(--text-dark)!important}
+.pj-title-sub,.pj-overall-label,.pj-sublabel,.pj-pct{color:var(--text-mid)!important}
+.pj-label{color:var(--text-dark)!important}
+.pj-overall-pct{color:#1B8ED4!important}
+.pj-step.complete .pj-dot{background:#00B0A2!important;border-color:#00B0A2!important;color:#fff!important}
+.pj-step.active .pj-dot{background:#F0B400!important;border-color:#F0B400!important;color:#1C2130!important}
+.pj-step.future .pj-dot{background:rgba(28,33,48,0.07)!important;border-color:rgba(28,33,48,0.15)!important;color:var(--text-soft)!important}
+.pj-connector{background:rgba(28,33,48,0.1)!important}
+
+.qa-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.qa-card.urgent{border-left:3px solid #D42870!important}
+.qa-card.next{border-left:3px solid #1B8ED4!important}
+.qa-card.soon{border-left:3px solid #F0B400!important}
+.qa-card.queue{border-left:3px solid #00B0A2!important}
+.qa-title{color:var(--text-dark)!important;font-family:'Cormorant Garamond',serif!important;font-size:16px!important;font-style:italic!important}
+.qa-desc{color:var(--text-mid)!important}
+.qa-priority{color:var(--text-soft)!important;font-size:9px!important}
+.qa-meta-item{color:var(--text-mid)!important}
+.qa-meta-item.bold{color:var(--text-dark)!important;font-weight:700!important}
+.qa-assignment{border-top:1px solid var(--border-l)!important}
+.qa-owner-label{color:var(--text-soft)!important}
+.qa-complete-btn{border-color:rgba(0,176,162,0.3)!important;color:#00B0A2!important;background:transparent!important}
+.qa-complete-btn:hover,.qa-complete-btn.done{background:rgba(0,176,162,0.1)!important}
+.qa-card.completed .qa-title{color:var(--text-soft)!important;text-decoration:line-through!important}
+
+.mission-hero{background:transparent!important}
+.mission-hero h2{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:28px!important;color:var(--text-dark)!important}
+.mission-hero .subtitle{color:var(--text-mid)!important}
+.mission-hero .mission-eyebrow{color:#00B0A2!important;letter-spacing:2px!important}
+.mission-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.mission-card:hover{border-color:rgba(27,142,212,0.3)!important}
+.mission-card.selected{border-color:#1B8ED4!important;box-shadow:0 0 0 2px rgba(27,142,212,0.2),var(--shadow-card)!important}
+.mission-text{color:var(--text-dark)!important}
+.option-num{color:var(--text-soft)!important;font-size:9px!important}
+.option-tag{font-size:10px!important}
+
+.board-tracker{background:transparent!important}
+.board-list,.board-summary .bs-card{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.board-list h3,.bs-card h4{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:18px!important;color:var(--text-dark)!important}
+.board-list .sub{color:var(--text-mid)!important}
+.board-row{border-bottom:1px solid rgba(28,33,48,0.06)!important}
+.board-row:hover{background:rgba(28,33,48,0.02)!important}
+.board-name{color:var(--text-dark)!important}
+.board-name.vacant{color:var(--text-soft)!important}
+.board-role,.board-term{color:var(--text-mid)!important}
+.board-status.bs-active{color:#00B0A2!important}
+.board-status.bs-vacant{color:var(--text-soft)!important}
+.board-status.bs-pending{color:#F0B400!important}
+.board-avatar.av-g{background:linear-gradient(135deg,#00B0A2,#005E58)!important;color:#fff!important}
+.board-avatar.av-p{background:linear-gradient(135deg,#1B8ED4,#0E4E8C)!important;color:#fff!important}
+.board-avatar.av-vacant{background:rgba(28,33,48,0.07)!important;color:var(--text-soft)!important}
+.bs-stat-label{color:var(--text-mid)!important}
+.bs-stat-val.g{color:#00B0A2!important}
+.bs-stat-val.k{color:#D42870!important}
+.bs-stat-val.gold{color:#F0B400!important}
+.bs-stat-val.p{color:#1B8ED4!important}
+.recruit-cta{background:linear-gradient(135deg,rgba(27,142,212,0.06),rgba(0,176,162,0.06))!important;border:1px solid rgba(27,142,212,0.15)!important}
+.recruit-cta-arrow,.recruit-cta-label{color:#1B8ED4!important}
+.recruit-cta-text{color:var(--text-mid)!important}
+.board-summary{background:transparent!important}
+
+.deadline-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.deadline-card:hover{border-color:#1B8ED4!important}
+.dc-title{color:var(--text-dark)!important}
+.dc-desc{color:var(--text-mid)!important}
+.calendar-wrapper,.cal-grid{background:var(--card-bg)!important;box-shadow:var(--shadow-card)!important;border:none!important}
+.cal-header{border-bottom:1px solid var(--border-l)!important}
+.cal-title{color:var(--text-dark)!important;font-family:'Cormorant Garamond',serif!important;font-style:italic!important}
+.cal-nav-btn{color:var(--text-mid)!important;background:rgba(28,33,48,0.05)!important;border-color:var(--border-l)!important}
+.cal-weekday{color:var(--text-soft)!important}
+.cal-day-cell{color:var(--text-dark)!important}
+.cal-day-cell:hover{background:rgba(27,142,212,0.06)!important}
+.cal-day-cell.today{background:#1B8ED4!important;color:#fff!important}
+.cal-day-cell.has-event{background:rgba(240,180,0,0.12)!important;color:#E07800!important}
+.cal-day-cell.other-month{color:var(--text-soft)!important;opacity:.45!important}
+.cal-legend-item{color:var(--text-mid)!important}
+
+.eligibility{background:transparent!important}
+.elig-card{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.elig-card h3{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:18px!important;color:var(--text-dark)!important}
+.elig-card .sub{color:var(--text-mid)!important}
+.elig-q{border-bottom:1px solid rgba(28,33,48,0.07)!important}
+.elig-q-num{background:#1B8ED4!important;color:#fff!important}
+.elig-q-text{color:var(--text-dark)!important}
+.elig-btn{border-color:var(--border-l)!important;color:var(--text-mid)!important;background:rgba(28,33,48,0.04)!important}
+.elig-btn.yes.active{background:#00B0A2!important;color:#fff!important;border-color:#00B0A2!important}
+.elig-btn.no.active{background:#D42870!important;color:#fff!important;border-color:#D42870!important}
+.elig-result{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.elig-result h4{color:var(--text-dark)!important}
+.elig-progress-row{color:var(--text-mid)!important;border-top:1px solid var(--border-l)!important}
+.elig-stat-val.fee{color:#00B0A2!important}
+.elig-stat-val.time{color:#1B8ED4!important}
+.elig-stat-label{color:var(--text-mid)!important}
+.elig-verdict-card{background:rgba(28,33,48,0.04)!important;border:1px solid var(--border-l)!important}
+.elig-verdict-card.eligible{background:rgba(0,176,162,0.08)!important;border-color:rgba(0,176,162,0.25)!important}
+.elig-verdict-card.ineligible{background:rgba(212,40,112,0.07)!important;border-color:rgba(212,40,112,0.2)!important}
+.elig-verdict-icon,.elig-verdict-title{color:var(--text-dark)!important}
+.elig-verdict-sub{color:var(--text-mid)!important}
+.elig-reset-btn{background:rgba(28,33,48,0.04)!important;border-color:var(--border-l)!important;color:var(--text-mid)!important}
+.elig-reset-btn:hover{background:rgba(212,40,112,0.07)!important;border-color:rgba(212,40,112,0.25)!important;color:#D42870!important}
+
+.vault-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.vault-card:hover{border-color:#1B8ED4!important;box-shadow:0 4px 20px rgba(27,142,212,0.1),0 0 0 1px rgba(27,142,212,0.15)!important;transform:translateY(-1px)!important}
+.vault-name{color:var(--text-dark)!important;font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-size:13.5px!important}
+.vault-meta{color:var(--text-soft)!important}
+.vi-g{background:rgba(0,176,162,0.1)!important;color:#00B0A2!important}
+.vi-p{background:rgba(156,24,120,0.08)!important;color:#9C1878!important}
+.vi-k{background:rgba(27,142,212,0.08)!important;color:#1B8ED4!important}
+.vs-ready{color:#00B0A2!important}
+.vs-todo{color:var(--text-soft)!important}
+.vault-owner-text{color:var(--text-soft)!important}
+
+.activity-wrapper{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.activity-header h3{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:18px!important;color:var(--text-dark)!important}
+.activity-header p{color:var(--text-mid)!important}
+.activity-filter{border:1px solid var(--border-l)!important;border-radius:10px!important;background:rgba(28,33,48,0.03)!important}
+.af-btn{color:var(--text-mid)!important;background:transparent!important}
+.af-btn.active{background:rgba(27,142,212,0.08)!important;color:#1B8ED4!important}
+.activity-item{border-bottom:1px solid rgba(28,33,48,0.06)!important}
+.activity-item:hover{background:rgba(28,33,48,0.02)!important}
+.act-content strong{color:var(--text-dark)!important}
+.act-content{color:var(--text-mid)!important}
+.act-meta{color:var(--text-soft)!important}
+.act-time{color:var(--text-soft)!important;font-size:9px!important}
+.act-icon{border-radius:10px!important}
+.act-icon.ai-create{background:rgba(0,176,162,0.1)!important;color:#00B0A2!important}
+.act-icon.ai-update{background:rgba(27,142,212,0.1)!important;color:#1B8ED4!important}
+.tag-doc{background:rgba(0,176,162,0.1)!important;border-color:rgba(0,176,162,0.2)!important;color:#00B0A2!important}
+.tag-mod{background:rgba(240,180,0,0.1)!important;border-color:rgba(240,180,0,0.2)!important;color:#E07800!important}
+
+.module-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.module-card:hover{border-color:#F0B400!important}
+.module-title{color:var(--text-dark)!important}
+.module-desc,.module-eta{color:var(--text-mid)!important}
+
+.signoff-badge{background:rgba(28,33,48,0.04)!important;border:1px solid var(--border-l)!important;color:var(--text-mid)!important}
+.signoff-badge:hover{border-color:#00B0A2!important;color:#00B0A2!important}
+.signoff-badge.signed{background:rgba(0,176,162,0.08)!important;border-color:#00B0A2!important;color:#00B0A2!important}
+
+#authGate{background:linear-gradient(160deg,#0E0C0A,#181410,#1C1610)!important}
+.auth-card{background:rgba(255,248,236,0.04)!important;border-color:rgba(240,180,0,0.12)!important}
+.auth-title{color:#F4F0E8!important}
+.auth-sub{color:rgba(244,240,232,0.6)!important}
+.auth-org{color:#00B0A2!important}
+.admin-modal-card{background:linear-gradient(180deg,#1C1A16,#181410)!important;border-color:rgba(240,180,0,0.15)!important}
+.admin-modal-title{color:#F0B400!important}
+
+.toast{background:linear-gradient(135deg,#1C1A16,#0E0C0A)!important;border-color:rgba(0,176,162,0.3)!important}
+.toast-icon{color:#00B0A2!important}
+
+.sync-dot.live{background:#00B0A2!important}
+.sync-dot.error{background:#D42870!important}
+.sync-dot.saving{background:#F0B400!important}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:rgba(28,33,48,0.04)}
+::-webkit-scrollbar-thumb{background:rgba(28,33,48,0.15);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:#F0B400}
+
+
+#authGate.hidden { display: none !important; }
+</style>
+.role-bar {
+  background: linear-gradient(90deg, rgba(12,17,33,0.98), rgba(12,17,33,0.95));
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 8px 20px 8px 260px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  backdrop-filter: blur(12px);
+}
+.role-bar-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); flex-shrink: 0; }
+.role-pills { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+.role-pill {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04); color: var(--muted);
+  transition: all 0.18s;
+}
+.role-pill:hover { border-color: rgba(255,255,255,0.22); color: #fff; }
+.role-pill.active { background: rgba(0,176,162,0.12); border-color: var(--green1); color: var(--green1); }
+.role-pill[data-role="legal"].active { background: rgba(156,24,120,0.12); border-color: var(--purple1); color: var(--purple1); }
+.role-pill[data-role="treasurer"].active { background: rgba(240,180,0,0.12); border-color: var(--gold); color: var(--gold); }
+.role-pill[data-role="secretary"].active { background: rgba(27,142,212,0.12); border-color: var(--cyan); color: var(--cyan); }
+.role-pill[data-role="observer"].active { background: rgba(212,40,112,0.12); border-color: var(--pink); color: var(--pink); }
+.role-session {
+  font-size: 10px; color: var(--muted); flex-shrink: 0; text-align: right;
+  border-left: 1px solid rgba(255,255,255,0.07); padding-left: 10px;
+}
+.role-session strong { color: #fff; }
+
+/* ── TASK OWNERSHIP ── */
+.qa-assignment {
+  display: flex; align-items: center; gap: 5px; margin-top: 8px;
+  padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);
+}
+.qa-owner-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.qa-owner-label { font-size: 9px; color: var(--muted); letter-spacing: 0.5px; }
+.qa-owner-name { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; }
+.qa-complete-btn {
+  margin-left: auto; font-size: 9px; font-weight: 700; padding: 3px 8px;
+  border-radius: 6px; border: 1px solid rgba(0,176,162,0.3);
+  background: transparent; color: var(--green1); cursor: pointer; letter-spacing: 0.5px;
+  transition: all 0.15s;
+}
+.qa-complete-btn:hover { background: rgba(0,176,162,0.1); }
+.qa-complete-btn.done { background: rgba(0,176,162,0.15); border-color: var(--green1); }
+.qa-card.completed { opacity: 0.55; }
+.qa-card.completed .qa-title { text-decoration: line-through; color: var(--muted); }
+
+/* ── VAULT OWNERSHIP ── */
+.vault-owner {
+  font-size: 9px; letter-spacing: 0.5px;
+  margin-top: 4px; display: flex; align-items: center; gap: 4px;
+}
+.vault-owner-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.vault-owner-text { color: var(--muted); }
+.vault-owner-name { font-weight: 700; }
+
+/* ── COLLAB METADATA ── */
+.collab-meta {
+  font-size: 9px; color: var(--muted); letter-spacing: 0.5px;
+  margin-top: 5px; font-style: italic;
+}
+
+/* ── SIGN-OFF TRACKER ── */
+.signoff-row {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;
+}
+.signoff-badge {
+  font-size: 8.5px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 8px;
+  border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04); color: var(--muted); cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+}
+.signoff-badge:hover { border-color: rgba(0,176,162,0.3); color: #fff; }
+.signoff-badge.signed { background: rgba(0,176,162,0.12); border-color: var(--green1); color: var(--green1); }
+
+/* ── ELIG RESET ── */
+.elig-reset-btn {
+  margin-top: 12px; width: 100%; padding: 8px; border-radius: 8px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  cursor: pointer; text-transform: uppercase; transition: all 0.15s;
+}
+.elig-reset-btn:hover { background: rgba(212,40,112,0.08); border-color: rgba(212,40,112,0.3); color: var(--pink); }
+
+/* ── NOTIFY TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  background: linear-gradient(135deg, #111827, #0C1121);
+  border: 1px solid rgba(0,176,162,0.3); border-radius: 12px;
+  padding: 12px 18px; font-size: 12px; color: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { color: var(--green1); margin-right: 8px; font-weight: 700; }
+
+/* HOUSING THEME */
+.housing-row{display:flex;align-items:flex-end;gap:5px;padding:0 40px;height:56px;overflow:hidden;position:relative;background:transparent}
+.housing-row::after{content:'';position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(to top,var(--content-bg),transparent);z-index:2;pointer-events:none}
+.hbar{flex-shrink:0;border-radius:3px 3px 0 0;opacity:.82;transition:transform .35s ease}
+.hbar:hover{transform:translateY(-5px)}
+.hb1{width:20px;height:30px;background:#0E5FA8}.hb2{width:20px;height:40px;background:#1B8ED4}
+.hb3{width:20px;height:34px;background:#00B0A2}.hb4{width:20px;height:24px;background:#7AC800}
+.hb5{width:20px;height:46px;background:#F0B400}.hb6{width:20px;height:38px;background:#E07800}
+.hb7{width:20px;height:28px;background:#C43030}.hb8{width:20px;height:50px;background:#D42870}
+.hb9{width:20px;height:34px;background:#9C1878}.hb10{width:20px;height:44px;background:#700E60}
+.hb11{width:16px;height:26px;background:#1B8ED4;opacity:.45}.hb12{width:16px;height:34px;background:#F0B400;opacity:.45}
+.hb13{width:16px;height:22px;background:#D42870;opacity:.45}.hb14{width:16px;height:30px;background:#00B0A2;opacity:.45}
+.hb15{width:16px;height:38px;background:#9C1878;opacity:.45}.hb16{width:16px;height:26px;background:#E07800;opacity:.45}
+.hb17{width:14px;height:18px;background:#F0B400;opacity:.28}.hb18{width:14px;height:28px;background:#1B8ED4;opacity:.28}
+.hb19{width:14px;height:22px;background:#D42870;opacity:.28}.hb20{width:14px;height:32px;background:#00B0A2;opacity:.28}
+
+.main{background:var(--content-bg)!important}
+.content{background:var(--content-bg)}
+
+.sidebar{background:linear-gradient(180deg,#0E0C0A 0%,#181410 100%)!important;border-right:1px solid rgba(240,180,0,0.08)!important}
+.sidebar-brand{border-bottom:1px solid rgba(240,180,0,0.1)!important}
+.nav-item{color:#9098A8!important}
+.nav-item:hover,.nav-item.active{background:rgba(240,180,0,0.08)!important;color:#F0B400!important;border-left-color:#F0B400!important}
+.nav-group-label{color:rgba(240,180,0,0.35)!important}
+.nav-divider{border-color:rgba(240,180,0,0.07)!important}
+
+.topbar{background:linear-gradient(135deg,#1C1610 0%,#0E0C0A 100%)!important;border-bottom:1px solid rgba(240,180,0,0.12)!important;position:sticky!important;position:relative!important}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1B8ED4 0%,#00B0A2 14%,#7AC800 28%,#F0B400 42%,#E07800 56%,#C43030 70%,#D42870 84%,#9C1878 100%);opacity:.7}
+.topbar-left h1{color:#F4F0E8!important}
+.topbar-left p{color:rgba(244,240,232,0.5)!important}
+.tag-nc{background:rgba(27,142,212,0.15)!important;border-color:rgba(27,142,212,0.25)!important;color:#1B8ED4!important}
+.tag-501{background:rgba(240,180,0,0.15)!important;border-color:rgba(240,180,0,0.25)!important;color:#F0B400!important}
+
+.role-bar{background:linear-gradient(90deg,#1C1610,#181410)!important;border-bottom:1px solid rgba(240,180,0,0.08)!important}
+.role-pill{color:#9098A8!important;border-color:rgba(255,255,255,0.08)!important}
+.role-pill:hover{color:#fff!important}
+.role-pill.active{background:rgba(240,180,0,0.1)!important;border-color:#F0B400!important;color:#F0B400!important}
+.role-pill[data-role="legal"].active{background:rgba(156,24,120,0.1)!important;border-color:#9C1878!important;color:#9C1878!important}
+.role-pill[data-role="secretary"].active{background:rgba(27,142,212,0.1)!important;border-color:#1B8ED4!important;color:#1B8ED4!important}
+.role-pill[data-role="observer"].active{background:rgba(212,40,112,0.1)!important;border-color:#D42870!important;color:#D42870!important}
+#sessionRole,#sessionTime{color:rgba(244,240,232,0.7)!important}
+#syncLabel{color:rgba(244,240,232,0.5)!important}
+.user-name{color:#F4F0E8!important}.user-email{color:rgba(244,240,232,0.5)!important}
+.user-badge.super{background:rgba(240,180,0,0.12)!important;border-color:rgba(240,180,0,0.3)!important;color:#F0B400!important}
+
+.progress-bar{background:rgba(255,255,255,0.06)!important}
+.progress-fill{background:linear-gradient(90deg,#1B8ED4,#F0B400,#D42870)!important}
+
+.sec-divider-label{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:17px!important;color:var(--text-dark)!important;letter-spacing:0!important;text-transform:none!important}
+.sec-divider-icon{font-size:16px!important}
+.sec-divider-line{border-color:rgba(28,33,48,0.12)!important}
+
+.stat-card{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.stat-card.green{border-top:3px solid #00B0A2!important}
+.stat-card.purple{border-top:3px solid #9C1878!important}
+.stat-card.gold{border-top:3px solid #F0B400!important}
+.stat-card.pink{border-top:3px solid #D42870!important}
+.stat-val{color:var(--text-dark)!important}
+.stat-label{color:var(--text-mid)!important}
+
+.phase-journey{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.pj-title{color:var(--text-dark)!important}
+.pj-title-sub,.pj-overall-label,.pj-sublabel,.pj-pct{color:var(--text-mid)!important}
+.pj-label{color:var(--text-dark)!important}
+.pj-overall-pct{color:#1B8ED4!important}
+.pj-step.complete .pj-dot{background:#00B0A2!important;border-color:#00B0A2!important;color:#fff!important}
+.pj-step.active .pj-dot{background:#F0B400!important;border-color:#F0B400!important;color:#1C2130!important}
+.pj-step.future .pj-dot{background:rgba(28,33,48,0.07)!important;border-color:rgba(28,33,48,0.15)!important;color:var(--text-soft)!important}
+.pj-connector{background:rgba(28,33,48,0.1)!important}
+
+.qa-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.qa-card.urgent{border-left:3px solid #D42870!important}
+.qa-card.next{border-left:3px solid #1B8ED4!important}
+.qa-card.soon{border-left:3px solid #F0B400!important}
+.qa-card.queue{border-left:3px solid #00B0A2!important}
+.qa-title{color:var(--text-dark)!important;font-family:'Cormorant Garamond',serif!important;font-size:16px!important;font-style:italic!important}
+.qa-desc{color:var(--text-mid)!important}
+.qa-priority{color:var(--text-soft)!important;font-size:9px!important}
+.qa-meta-item{color:var(--text-mid)!important}
+.qa-meta-item.bold{color:var(--text-dark)!important;font-weight:700!important}
+.qa-assignment{border-top:1px solid var(--border-l)!important}
+.qa-owner-label{color:var(--text-soft)!important}
+.qa-complete-btn{border-color:rgba(0,176,162,0.3)!important;color:#00B0A2!important;background:transparent!important}
+.qa-complete-btn:hover,.qa-complete-btn.done{background:rgba(0,176,162,0.1)!important}
+.qa-card.completed .qa-title{color:var(--text-soft)!important;text-decoration:line-through!important}
+
+.mission-hero{background:transparent!important}
+.mission-hero h2{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:28px!important;color:var(--text-dark)!important}
+.mission-hero .subtitle{color:var(--text-mid)!important}
+.mission-hero .mission-eyebrow{color:#00B0A2!important;letter-spacing:2px!important}
+.mission-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.mission-card:hover{border-color:rgba(27,142,212,0.3)!important}
+.mission-card.selected{border-color:#1B8ED4!important;box-shadow:0 0 0 2px rgba(27,142,212,0.2),var(--shadow-card)!important}
+.mission-text{color:var(--text-dark)!important}
+.option-num{color:var(--text-soft)!important;font-size:9px!important}
+.option-tag{font-size:10px!important}
+
+.board-tracker{background:transparent!important}
+.board-list,.board-summary .bs-card{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.board-list h3,.bs-card h4{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:18px!important;color:var(--text-dark)!important}
+.board-list .sub{color:var(--text-mid)!important}
+.board-row{border-bottom:1px solid rgba(28,33,48,0.06)!important}
+.board-row:hover{background:rgba(28,33,48,0.02)!important}
+.board-name{color:var(--text-dark)!important}
+.board-name.vacant{color:var(--text-soft)!important}
+.board-role,.board-term{color:var(--text-mid)!important}
+.board-status.bs-active{color:#00B0A2!important}
+.board-status.bs-vacant{color:var(--text-soft)!important}
+.board-status.bs-pending{color:#F0B400!important}
+.board-avatar.av-g{background:linear-gradient(135deg,#00B0A2,#005E58)!important;color:#fff!important}
+.board-avatar.av-p{background:linear-gradient(135deg,#1B8ED4,#0E4E8C)!important;color:#fff!important}
+.board-avatar.av-vacant{background:rgba(28,33,48,0.07)!important;color:var(--text-soft)!important}
+.bs-stat-label{color:var(--text-mid)!important}
+.bs-stat-val.g{color:#00B0A2!important}
+.bs-stat-val.k{color:#D42870!important}
+.bs-stat-val.gold{color:#F0B400!important}
+.bs-stat-val.p{color:#1B8ED4!important}
+.recruit-cta{background:linear-gradient(135deg,rgba(27,142,212,0.06),rgba(0,176,162,0.06))!important;border:1px solid rgba(27,142,212,0.15)!important}
+.recruit-cta-arrow,.recruit-cta-label{color:#1B8ED4!important}
+.recruit-cta-text{color:var(--text-mid)!important}
+.board-summary{background:transparent!important}
+
+.deadline-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.deadline-card:hover{border-color:#1B8ED4!important}
+.dc-title{color:var(--text-dark)!important}
+.dc-desc{color:var(--text-mid)!important}
+.calendar-wrapper,.cal-grid{background:var(--card-bg)!important;box-shadow:var(--shadow-card)!important;border:none!important}
+.cal-header{border-bottom:1px solid var(--border-l)!important}
+.cal-title{color:var(--text-dark)!important;font-family:'Cormorant Garamond',serif!important;font-style:italic!important}
+.cal-nav-btn{color:var(--text-mid)!important;background:rgba(28,33,48,0.05)!important;border-color:var(--border-l)!important}
+.cal-weekday{color:var(--text-soft)!important}
+.cal-day-cell{color:var(--text-dark)!important}
+.cal-day-cell:hover{background:rgba(27,142,212,0.06)!important}
+.cal-day-cell.today{background:#1B8ED4!important;color:#fff!important}
+.cal-day-cell.has-event{background:rgba(240,180,0,0.12)!important;color:#E07800!important}
+.cal-day-cell.other-month{color:var(--text-soft)!important;opacity:.45!important}
+.cal-legend-item{color:var(--text-mid)!important}
+
+.eligibility{background:transparent!important}
+.elig-card{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.elig-card h3{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:18px!important;color:var(--text-dark)!important}
+.elig-card .sub{color:var(--text-mid)!important}
+.elig-q{border-bottom:1px solid rgba(28,33,48,0.07)!important}
+.elig-q-num{background:#1B8ED4!important;color:#fff!important}
+.elig-q-text{color:var(--text-dark)!important}
+.elig-btn{border-color:var(--border-l)!important;color:var(--text-mid)!important;background:rgba(28,33,48,0.04)!important}
+.elig-btn.yes.active{background:#00B0A2!important;color:#fff!important;border-color:#00B0A2!important}
+.elig-btn.no.active{background:#D42870!important;color:#fff!important;border-color:#D42870!important}
+.elig-result{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.elig-result h4{color:var(--text-dark)!important}
+.elig-progress-row{color:var(--text-mid)!important;border-top:1px solid var(--border-l)!important}
+.elig-stat-val.fee{color:#00B0A2!important}
+.elig-stat-val.time{color:#1B8ED4!important}
+.elig-stat-label{color:var(--text-mid)!important}
+.elig-verdict-card{background:rgba(28,33,48,0.04)!important;border:1px solid var(--border-l)!important}
+.elig-verdict-card.eligible{background:rgba(0,176,162,0.08)!important;border-color:rgba(0,176,162,0.25)!important}
+.elig-verdict-card.ineligible{background:rgba(212,40,112,0.07)!important;border-color:rgba(212,40,112,0.2)!important}
+.elig-verdict-icon,.elig-verdict-title{color:var(--text-dark)!important}
+.elig-verdict-sub{color:var(--text-mid)!important}
+.elig-reset-btn{background:rgba(28,33,48,0.04)!important;border-color:var(--border-l)!important;color:var(--text-mid)!important}
+.elig-reset-btn:hover{background:rgba(212,40,112,0.07)!important;border-color:rgba(212,40,112,0.25)!important;color:#D42870!important}
+
+.vault-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.vault-card:hover{border-color:#1B8ED4!important;box-shadow:0 4px 20px rgba(27,142,212,0.1),0 0 0 1px rgba(27,142,212,0.15)!important;transform:translateY(-1px)!important}
+.vault-name{color:var(--text-dark)!important;font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-size:13.5px!important}
+.vault-meta{color:var(--text-soft)!important}
+.vi-g{background:rgba(0,176,162,0.1)!important;color:#00B0A2!important}
+.vi-p{background:rgba(156,24,120,0.08)!important;color:#9C1878!important}
+.vi-k{background:rgba(27,142,212,0.08)!important;color:#1B8ED4!important}
+.vs-ready{color:#00B0A2!important}
+.vs-todo{color:var(--text-soft)!important}
+.vault-owner-text{color:var(--text-soft)!important}
+
+.activity-wrapper{background:var(--card-bg)!important;border:none!important;box-shadow:var(--shadow-card)!important}
+.activity-header h3{font-family:'Cormorant Garamond',serif!important;font-style:italic!important;font-weight:400!important;font-size:18px!important;color:var(--text-dark)!important}
+.activity-header p{color:var(--text-mid)!important}
+.activity-filter{border:1px solid var(--border-l)!important;border-radius:10px!important;background:rgba(28,33,48,0.03)!important}
+.af-btn{color:var(--text-mid)!important;background:transparent!important}
+.af-btn.active{background:rgba(27,142,212,0.08)!important;color:#1B8ED4!important}
+.activity-item{border-bottom:1px solid rgba(28,33,48,0.06)!important}
+.activity-item:hover{background:rgba(28,33,48,0.02)!important}
+.act-content strong{color:var(--text-dark)!important}
+.act-content{color:var(--text-mid)!important}
+.act-meta{color:var(--text-soft)!important}
+.act-time{color:var(--text-soft)!important;font-size:9px!important}
+.act-icon{border-radius:10px!important}
+.act-icon.ai-create{background:rgba(0,176,162,0.1)!important;color:#00B0A2!important}
+.act-icon.ai-update{background:rgba(27,142,212,0.1)!important;color:#1B8ED4!important}
+.tag-doc{background:rgba(0,176,162,0.1)!important;border-color:rgba(0,176,162,0.2)!important;color:#00B0A2!important}
+.tag-mod{background:rgba(240,180,0,0.1)!important;border-color:rgba(240,180,0,0.2)!important;color:#E07800!important}
+
+.module-card{background:var(--card-bg)!important;border:1px solid var(--border-l)!important;box-shadow:var(--shadow-card)!important}
+.module-card:hover{border-color:#F0B400!important}
+.module-title{color:var(--text-dark)!important}
+.module-desc,.module-eta{color:var(--text-mid)!important}
+
+.signoff-badge{background:rgba(28,33,48,0.04)!important;border:1px solid var(--border-l)!important;color:var(--text-mid)!important}
+.signoff-badge:hover{border-color:#00B0A2!important;color:#00B0A2!important}
+.signoff-badge.signed{background:rgba(0,176,162,0.08)!important;border-color:#00B0A2!important;color:#00B0A2!important}
+
+#authGate{background:linear-gradient(160deg,#0E0C0A,#181410,#1C1610)!important}
+.auth-card{background:rgba(255,248,236,0.04)!important;border-color:rgba(240,180,0,0.12)!important}
+.auth-title{color:#F4F0E8!important}
+.auth-sub{color:rgba(244,240,232,0.6)!important}
+.auth-org{color:#00B0A2!important}
+.admin-modal-card{background:linear-gradient(180deg,#1C1A16,#181410)!important;border-color:rgba(240,180,0,0.15)!important}
+.admin-modal-title{color:#F0B400!important}
+
+.toast{background:linear-gradient(135deg,#1C1A16,#0E0C0A)!important;border-color:rgba(0,176,162,0.3)!important}
+.toast-icon{color:#00B0A2!important}
+
+.sync-dot.live{background:#00B0A2!important}
+.sync-dot.error{background:#D42870!important}
+.sync-dot.saving{background:#F0B400!important}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:rgba(28,33,48,0.04)}
+::-webkit-scrollbar-thumb{background:rgba(28,33,48,0.15);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:#F0B400}
+
+</style>
+</head>
+<body>
+
+<!-- ══ AUTH GATE ══ -->
+<div id="authGate">
+  <div class="auth-card">
+    <div style="display:flex;justify-content:center;margin-bottom:16px;">
+      <svg width="44" height="56" viewBox="0 0 220 280" fill="none" style="filter:drop-shadow(0 0 10px rgba(0,176,162,0.18));flex-shrink:0;" aria-hidden="true">
+      <defs>
+        <linearGradient id="ag-s" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stop-color="#00B0A2"/>
+          <stop offset="45%"  stop-color="#9C1878"/>
+          <stop offset="100%" stop-color="#D42870"/>
+        </linearGradient>
+        <linearGradient id="ag-f" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#00B0A2" stop-opacity="0.09"/>
+          <stop offset="100%" stop-color="#0E0C0A" stop-opacity="0.32"/>
+        </linearGradient>
+        <linearGradient id="ag-l" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#1B8ED4"/>
+          <stop offset="50%"  stop-color="#9C1878"/>
+          <stop offset="100%" stop-color="#F0B400"/>
+        </linearGradient>
+        <clipPath id="ag-c"><path d="M 16,16 L 204,16 L 204,156 Q 204,226 110,268 Q 16,226 16,156 Z"/></clipPath>
+      </defs>
+      <!-- Shield body -->
+      <path d="M 16,16 L 204,16 L 204,156 Q 204,226 110,268 Q 16,226 16,156 Z"
+            fill="url(#ag-f)" stroke="url(#ag-s)" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M 24,24 L 196,24 L 196,154 Q 196,218 110,258 Q 24,218 24,154 Z"
+            fill="none" stroke="url(#ag-s)" stroke-width="0.7" stroke-linejoin="round" opacity="0.35"/>
+      <!-- Bar chart mark inside shield -->
+      <g clip-path="url(#ag-c)">
+        <g transform="translate(110,155) skewX(-8) translate(-110,-155)">
+          <rect x="37"  y="70"  width="24" height="130" rx="4" fill="#1B8ED4" opacity="0.88"/>
+          <rect x="66"  y="145" width="24" height="55"  rx="4" fill="#00B0A2" opacity="0.72"/>
+          <rect x="95"  y="105" width="24" height="95"  rx="4" fill="#9C1878" opacity="0.88"/>
+          <rect x="124" y="145" width="24" height="55"  rx="4" fill="#D42870" opacity="0.72"/>
+          <rect x="153" y="70"  width="24" height="130" rx="4" fill="#F0B400" opacity="0.88"/>
+          <polyline points="49,70 78,145 107,105 136,145 165,70"
+                    stroke="url(#ag-l)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+          <circle cx="49"  cy="70"  r="4.5" fill="#1B8ED4"/>
+          <circle cx="107" cy="105" r="3.5" fill="#9C1878"/>
+          <circle cx="165" cy="70"  r="4.5" fill="#F0B400"/>
+        </g>
+      </g>
+      <!-- Top and bottom accent dots -->
+      <circle cx="110" cy="16"  r="5" fill="#00B0A2"/>
+      <circle cx="110" cy="268" r="5" fill="#D42870"/>
+    </svg>
+    </div>
+    <div class="auth-logo"><span class="m">M</span><span class="pact">PACT</span></div>
+    <div class="auth-org">MISSION FOUNDATION</div>
+    <div class="auth-city">CHARLOTTE · NORTH CAROLINA</div>
+    <div class="auth-title">Nonprofit Formation Portal</div>
+    <div class="auth-sub">Sign in with your authorized Google account to access the MPact Mission Foundation nonprofit formation portal.</div>
+    <div id="authSignInDiv"></div>
+    <div class="auth-status" id="authStatus"></div>
+    <div class="auth-denied" id="authDenied">
+      <strong>Access Denied</strong>
+      Your email address is not on the authorized user list. Contact a super admin to request access.
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL MODAL ══ -->
+<div id="adminModal">
+  <div class="admin-modal-card">
+    <div class="admin-modal-header">
+      <div class="admin-modal-title">⚙️ Super Admin Panel</div>
+      <span class="admin-modal-close" onclick="closeAdminPanel()">✕</span>
+    </div>
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="switchAdminTab('users',this)">👥 Users</div>
+      <div class="admin-tab" onclick="switchAdminTab('add',this)">➕ Add User</div>
+      <div class="admin-tab" onclick="switchAdminTab('log',this)">📋 Activity Log</div>
+      <div class="admin-tab" onclick="switchAdminTab('sync',this)">🔄 Sync Status</div>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="admin-tab-pane active" id="admin-tab-users">
+      <div id="userTableWrap">
+        <table class="user-table">
+          <thead><tr>
+            <th>Email</th><th>Name</th><th>Role</th><th>Status</th><th>Last Active</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="userTableBody">
+            <tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add User Tab -->
+    <div class="admin-tab-pane" id="admin-tab-add">
+      <p style="font-size:11px;color:var(--muted);margin-bottom:16px;">Add a new authorized user. They will be able to sign in with their Google account on next visit.</p>
+      <div class="add-user-form">
+        <div class="afu-field">
+          <label>Email Address</label>
+          <input type="email" id="addUserEmail" placeholder="name@domain.com">
+        </div>
+        <div class="afu-field">
+          <label>Display Name</label>
+          <input type="text" id="addUserName" placeholder="Full Name">
+        </div>
+        <div class="afu-field">
+          <label>Role</label>
+          <select id="addUserRole">
+            <option value="founder">Founder / CEO</option>
+            <option value="legal">Legal Officer</option>
+            <option value="treasurer">Treasurer</option>
+            <option value="secretary">Secretary</option>
+            <option value="observer">Board Observer</option>
+            <option value="ed">Interim ED</option>
+          </select>
+        </div>
+        <button class="afu-submit" onclick="addAdminUser()">+ Add User</button>
+      </div>
+      <div style="margin-top:12px;font-size:10px;color:var(--muted);" id="addUserStatus"></div>
+    </div>
+
+    <!-- Activity Log Tab -->
+    <div class="admin-tab-pane" id="admin-tab-log">
+      <table class="log-table">
+        <thead><tr><th>User</th><th>Action</th><th>Detail</th><th>Time</th></tr></thead>
+        <tbody id="logTableBody">
+          <tr><td colspan="4" style="color:var(--muted);text-align:center;padding:20px;">Loading log...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sync Status Tab -->
+    <div class="admin-tab-pane" id="admin-tab-sync">
+      <div class="sync-bar">
+        <div class="sync-dot live" id="modalSyncDot"></div>
+        <div class="sync-bar-text" id="modalSyncText">Connected to Google Sheets backend</div>
+        <button class="sync-refresh-btn" onclick="forceSyncAll()">↺ Force Sync</button>
+      </div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.8;" id="syncDetails">
+        <div>Apps Script URL: <span style="color:var(--cyan);" id="syncUrlDisplay">—</span></div>
+        <div>Last full sync: <span id="syncLastTime">—</span></div>
+        <div>Connected users (this session): <span id="syncConnectedCount">1</span></div>
+        <div style="margin-top:12px;color:var(--green1);font-size:9px;letter-spacing:1px;font-weight:700;">SYNC SCOPE</div>
+        <div>Task completions · Mission selection · Board members · Eligibility answers · Sign-offs · Activity log</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="role-bar" id="roleBar">
+  <span class="role-bar-label">Viewing as →</span>
+  <div class="role-pills">
+    <button class="role-pill active" data-role="founder" onclick="setRole('founder')">🏛 Founder / CEO</button>
+    <button class="role-pill" data-role="legal" onclick="setRole('legal')">⚖️ Legal Officer</button>
+    <button class="role-pill" data-role="treasurer" onclick="setRole('treasurer')">💰 Treasurer</button>
+    <button class="role-pill" data-role="secretary" onclick="setRole('secretary')">📋 Secretary</button>
+    <button class="role-pill" data-role="observer" onclick="setRole('observer')">👁 Board Observer</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0;">
+    <div class="sync-indicator">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel" style="font-size:9px;">offline</span>
+    </div>
+    <button class="admin-panel-btn" id="adminPanelBtn" onclick="openAdminPanel()">⚙ Admin</button>
+    <div class="user-bar" id="userBar" style="display:none;">
+      <div class="user-avatar" id="userAvatar"></div>
+      <div class="user-info">
+        <div class="user-name" id="userName">—</div>
+        <div class="user-email" id="userEmailDisplay">—</div>
+      </div>
+      <div class="user-badge super" id="userBadge" style="display:none;">SUPER ADMIN</div>
+      <button class="signout-btn" onclick="signOut()">Sign Out</button>
+    </div>
+  </div>
+  <div class="role-session" id="sessionInfo">
+    <strong id="sessionRole">Founder / CEO</strong><br>
+    <span id="sessionTime"></span>
+  </div>
+</div>
+
+<!-- ══ TOAST NOTIFICATION ══ -->
+<div class="toast" id="toast"><span class="toast-icon">✓</span><span id="toastMsg"></span></div>
+
+<div class="glow-tl"></div>
+<div class="glow-br"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <svg width="36" height="46" viewBox="0 0 220 280" fill="none" style="filter:drop-shadow(0 0 10px rgba(0,176,162,0.22));flex-shrink:0;" aria-hidden="true">
+      <defs>
+        <linearGradient id="sb-s" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stop-color="#00B0A2"/>
+          <stop offset="45%"  stop-color="#9C1878"/>
+          <stop offset="100%" stop-color="#D42870"/>
+        </linearGradient>
+        <linearGradient id="sb-f" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#00B0A2" stop-opacity="0.09"/>
+          <stop offset="100%" stop-color="#0E0C0A" stop-opacity="0.32"/>
+        </linearGradient>
+        <linearGradient id="sb-l" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#1B8ED4"/>
+          <stop offset="50%"  stop-color="#9C1878"/>
+          <stop offset="100%" stop-color="#F0B400"/>
+        </linearGradient>
+        <clipPath id="sb-c"><path d="M 16,16 L 204,16 L 204,156 Q 204,226 110,268 Q 16,226 16,156 Z"/></clipPath>
+      </defs>
+      <!-- Shield body -->
+      <path d="M 16,16 L 204,16 L 204,156 Q 204,226 110,268 Q 16,226 16,156 Z"
+            fill="url(#sb-f)" stroke="url(#sb-s)" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M 24,24 L 196,24 L 196,154 Q 196,218 110,258 Q 24,218 24,154 Z"
+            fill="none" stroke="url(#sb-s)" stroke-width="0.7" stroke-linejoin="round" opacity="0.35"/>
+      <!-- Bar chart mark inside shield -->
+      <g clip-path="url(#sb-c)">
+        <g transform="translate(110,155) skewX(-8) translate(-110,-155)">
+          <rect x="37"  y="70"  width="24" height="130" rx="4" fill="#1B8ED4" opacity="0.88"/>
+          <rect x="66"  y="145" width="24" height="55"  rx="4" fill="#00B0A2" opacity="0.72"/>
+          <rect x="95"  y="105" width="24" height="95"  rx="4" fill="#9C1878" opacity="0.88"/>
+          <rect x="124" y="145" width="24" height="55"  rx="4" fill="#D42870" opacity="0.72"/>
+          <rect x="153" y="70"  width="24" height="130" rx="4" fill="#F0B400" opacity="0.88"/>
+          <polyline points="49,70 78,145 107,105 136,145 165,70"
+                    stroke="url(#sb-l)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+          <circle cx="49"  cy="70"  r="4.5" fill="#1B8ED4"/>
+          <circle cx="107" cy="105" r="3.5" fill="#9C1878"/>
+          <circle cx="165" cy="70"  r="4.5" fill="#F0B400"/>
+        </g>
+      </g>
+      <!-- Top and bottom accent dots -->
+      <circle cx="110" cy="16"  r="5" fill="#00B0A2"/>
+      <circle cx="110" cy="268" r="5" fill="#D42870"/>
+    </svg>
+    <div class="sidebar-wordmark">
+      <div class="wm-top"><span class="m">M</span><span class="pact">Pact</span></div>
+      <div class="wm-sub-text">Mission Foundation</div>
+      <div style="font-size:8px;letter-spacing:1.5px;color:rgba(240,237,231,0.28);margin-top:3px;font-weight:500;">501(c)(3) · CHARITABLE FINANCE</div>
+    </div>
+  </div>
+
+  <div class="admin-badge">
+    <div class="dot"></div>
+    <span>Formation Portal</span>
+  </div>
+
+  <div class="nav-section" style="margin-top:8px;">
+    <div class="nav-section-label">Nonprofit Formation</div>
+    <a class="nav-item" href="#mission">
+      <span class="nav-icon">🎯</span> Mission Statement
+    </a>
+    <a class="nav-item active" href="#board">
+      <span class="nav-icon">🏛️</span> Board Tracker
+    </a>
+    <a class="nav-item" href="#deadlines">
+      <span class="nav-icon">📅</span> Filing Deadlines
+    </a>
+    <a class="nav-item" href="#eligibility">
+      <span class="nav-icon">🧮</span> 1023-EZ Checker
+    </a>
+    <a class="nav-item" href="#vault">
+      <span class="nav-icon">🗄</span> Document Vault
+    </a>
+    <a class="nav-item" href="#activity">
+      <span class="nav-icon">📡</span> Activity Log
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Reference (v1)</div>
+    <a class="nav-item" href="mpact_admin_dashboard.html">
+      <span class="nav-icon">✅</span> Filing Checklist
+    </a>
+    <a class="nav-item" href="mpact_admin_dashboard.html#costs">
+      <span class="nav-icon">💰</span> Cost Assessment
+    </a>
+    <a class="nav-item" href="mpact_admin_dashboard.html#roles">
+      <span class="nav-icon">👥</span> Critical Roles
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Roadmap</div>
+    <a class="nav-item" href="#modules">
+      <span class="nav-icon">✨</span> Suggested Modules
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <p>MPact Mission Foundation<br>North Carolina · 501(c)(3)<br>
+    <span style="color:rgba(240,237,231,0.22);font-size:9px;">Charitable Finance Platform</span></p>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>MPact Mission Foundation <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--green1);margin-left:8px;">· Formation Portal</span></h1>
+      <p>Charitable Finance Platform · Six Operating Programs · Capital Markets for Community Outcomes</p>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-tag tag-nc">North Carolina</span>
+      <span class="topbar-tag tag-501">501(c)(3)</span>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <div class="housing-row" aria-hidden="true"><div class="hbar hb1"></div><div class="hbar hb2"></div><div class="hbar hb3"></div><div class="hbar hb4"></div><div class="hbar hb5"></div><div class="hbar hb6"></div><div class="hbar hb7"></div><div class="hbar hb8"></div><div class="hbar hb9"></div><div class="hbar hb10"></div><div class="hbar hb11"></div><div class="hbar hb12"></div><div class="hbar hb13"></div><div class="hbar hb14"></div><div class="hbar hb15"></div><div class="hbar hb16"></div><div class="hbar hb17"></div><div class="hbar hb18"></div><div class="hbar hb19"></div><div class="hbar hb20"></div></div>
+
+  <div class="content">
+
+    <!-- Status Stats -->
+    <div class="stats-row">
+      <div class="stat-card green">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-val" style="font-size:22px;padding-top:4px;">v5 ✓</div>
+        <div class="stat-label">Mission Adopted · Charitable Finance Platform</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-icon">🏛️</div>
+        <div class="stat-val">2 / 5</div>
+        <div class="stat-label">Board Seats Filled</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon">📅</div>
+        <div class="stat-val">7</div>
+        <div class="stat-label">Active Filing Deadlines</div>
+      </div>
+      <div class="stat-card pink">
+        <div class="stat-icon">📄</div>
+        <div class="stat-val">13 / 14</div>
+        <div class="stat-label">Documents Drafted</div>
+      </div>
+    </div>
+
+    <!-- ══ PHASE PROGRESS JOURNEY ══ -->
+    <div style="margin-top:24px;">
+      <div class="phase-journey">
+        <div class="pj-header">
+          <div>
+            <div class="pj-title">Formation Journey</div>
+            <div class="pj-title-sub">Track progress from concept to fully operational 501(c)(3)</div>
+          </div>
+          <div class="pj-overall">
+            <div class="pj-overall-pct">22%</div>
+            <div class="pj-overall-label">Overall Complete</div>
+          </div>
+        </div>
+        <div class="pj-track">
+          <div class="pj-step complete">
+            <div class="pj-dot"><span>1</span></div>
+            <div class="pj-label">Foundation</div>
+            <div class="pj-sublabel">Mission · Board</div>
+            <div class="pj-pct">75%</div>
+          </div>
+          <div class="pj-step active">
+            <div class="pj-dot"><span>2</span></div>
+            <div class="pj-label">Incorporation</div>
+            <div class="pj-sublabel">NC SOS Filing</div>
+            <div class="pj-pct">35%</div>
+          </div>
+          <div class="pj-step future">
+            <div class="pj-dot"><span>3</span></div>
+            <div class="pj-label">IRS Application</div>
+            <div class="pj-sublabel">Form 1023</div>
+            <div class="pj-pct">0%</div>
+          </div>
+          <div class="pj-step future">
+            <div class="pj-dot"><span>4</span></div>
+            <div class="pj-label">State Compliance</div>
+            <div class="pj-sublabel">DOJ · DOR</div>
+            <div class="pj-pct">0%</div>
+          </div>
+          <div class="pj-step future">
+            <div class="pj-dot"><span>5</span></div>
+            <div class="pj-label">Operational</div>
+            <div class="pj-sublabel">Active Programs</div>
+            <div class="pj-pct">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ QUICK ACTIONS HUB ══ -->
+    <div class="sec-divider">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">⚡</span>
+      <span class="sec-divider-label">Next Best Actions · This Week</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="quick-actions" id="quickActionsHub">
+      <!-- Populated by JS based on active role -->
+    </div>
+
+    <!-- ══ MISSION STATEMENT ══ -->
+    <div class="sec-divider" id="mission">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">🎯</span>
+      <span class="sec-divider-label">Mission Statement · Draft Options</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="mission-hero">
+      <div class="mission-eyebrow">501(c)(3) Charitable Finance Platform · Advancing the Ownership Economy · Charlotte, NC</div>
+      <h2>The MPact Operating Architecture</h2>
+      <p class="subtitle">MPact Mission Foundation deploys <strong style="color:var(--h-teal, #00B0A2);">institutional-grade capital market tools</strong> — structured finance, tax-exempt bonds, AI-powered asset management, and blockchain-verified impact tracking — toward community and people-based outcomes. The Foundation operates alongside MPact Capital, LLC as peer organizations in the Ownership Economy mission, channeling charitable capital through <strong style="color:var(--green1);">six operating programs</strong> across <strong style="color:var(--cyan);">four thematic pillars</strong>.</p>
+    </div>
+
+    <!-- ── Primary Mission Card (full width) ── -->
+    <div class="mission-card selected" style="grid-column: 1 / -1; padding: 32px 36px; cursor: default; margin-bottom: 14px;">
+      <div class="option-num">PRIMARY MISSION · ADOPTED v5</div>
+      <div class="option-tag" style="background:rgba(0,176,162,0.10);color:var(--green1)">Adopted v5 · 501(c)(3) Charitable Finance Platform · Six Operating Programs</div>
+      <p class="mission-text" style="font-size:17px;">"MPact Mission Foundation is a <strong style="color:var(--green1);font-style:normal;">charitable finance platform</strong> that provides market-based solutions and financial tools of dignity to help hardworking Americans and their communities achieve <strong style="color:var(--pink);font-style:normal;">the American Dream</strong>. The Foundation delivers its charitable mission as a <strong style="color:var(--green1);font-style:normal;">non-profit issuer</strong>, <strong style="color:var(--purple1);font-style:normal;">conduit issuer</strong>, <strong style="color:var(--cyan);font-style:normal;">fiscal sponsor</strong>, and <strong style="color:var(--gold);font-style:normal;">steward of Philanthropic Investment Grants (PHIGs)</strong> — supported by grants, advisory services, structured solutions, and advocacy across the pillars of housing stability, homeownership, small business ownership, and generational wealth-building."</p>
+    </div>
+
+    <!-- ── FOUR PRIMARY ACTIVITIES ── -->
+    <div style="margin: 18px 0 14px;">
+      <div style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:14px;text-align:center;">Six Operating Programs</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+
+        <div class="mission-card" style="cursor:default;border-color:rgba(0,176,162,0.25);background:linear-gradient(180deg,rgba(0,176,162,0.05),rgba(0,176,162,0.01));">
+          <div class="option-num" style="color:var(--green1)">ACTIVITY 01</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--green1);margin-bottom:8px;">Non-Profit Issuer</div>
+          <div style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:12px;">Issues debt, equity, and other charitable financial instruments — Community Impact Notes, Program Notes, Charitable Bonds — to deploy capital directly into thematic pillar activities.</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(0,176,162,0.12);color:var(--green1);font-weight:600;">Reg D / Reg A</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(0,176,162,0.12);color:var(--green1);font-weight:600;">PRI Eligible</span>
+          </div>
+        </div>
+
+        <div class="mission-card" style="cursor:default;border-color:rgba(156,24,120,0.25);background:linear-gradient(180deg,rgba(156,24,120,0.05),rgba(156,24,120,0.01));">
+          <div class="option-num" style="color:var(--purple1)">ACTIVITY 02</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--purple1);margin-bottom:8px;">Conduit Issuer</div>
+          <div style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:12px;">Issues qualified 501(c)(3) bonds under IRC §145 on behalf of qualified 501(c)(3) borrowers (affordable housing developers, CLTs, etc.). 95% use-of-proceeds test.</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(156,24,120,0.12);color:var(--purple1);font-weight:600;">IRC §145</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(156,24,120,0.12);color:var(--purple1);font-weight:600;">TEFRA</span>
+          </div>
+        </div>
+
+        <div class="mission-card" style="cursor:default;border-color:rgba(240,180,0,0.25);background:linear-gradient(180deg,rgba(240,180,0,0.05),rgba(240,180,0,0.01));">
+          <div class="option-num" style="color:var(--gold)">ACTIVITY 03</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold);margin-bottom:8px;">PHIG Sponsor</div>
+          <div style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:12px;">Receives Philanthropic Investment Grants. Donor recommends, MMF performs diligence and invests, ~99% of returns recycle back. Modeled on Realize Impact.</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(240,180,0,0.12);color:var(--gold);font-weight:600;">PRI · §4944(c)</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(240,180,0,0.12);color:var(--gold);font-weight:600;">Not a DAF</span>
+          </div>
+        </div>
+
+        <div class="mission-card" style="cursor:default;border-color:rgba(27,142,212,0.25);background:linear-gradient(180deg,rgba(27,142,212,0.05),rgba(27,142,212,0.01));">
+          <div class="option-num" style="color:var(--cyan)">ACTIVITY 04</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--cyan);margin-bottom:8px;">Fiscal Sponsor</div>
+          <div style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:12px;">Provides Model A (comprehensive) and Model C (pre-approved grant) fiscal sponsorship to charitable projects. Variance power retained on all sponsored funds.</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(27,142,212,0.12);color:var(--cyan);font-weight:600;">Model A · C</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(27,142,212,0.12);color:var(--cyan);font-weight:600;">NNFS Aligned</span>
+          </div>
+        </div>
+
+      </div>
+
+        <div class="mission-card" style="cursor:default;border-color:rgba(224,120,0,0.25);background:linear-gradient(180deg,rgba(224,120,0,0.05),rgba(224,120,0,0.01));">
+          <div class="option-num" style="color:var(--h-orange)">PROGRAM 05</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--h-orange);margin-bottom:8px;">Multifamily Asset &amp; Investment Mgmt</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.55;margin-bottom:12px;">Nonprofit asset &amp; investment management for affordable multifamily housing portfolios, CDFIs, and LIHTC funds — powered by AI analytics and blockchain ownership records.</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(224,120,0,0.12);color:var(--h-orange);font-weight:600;">LIHTC</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(224,120,0,0.12);color:var(--h-orange);font-weight:600;">AI Analytics</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(224,120,0,0.12);color:var(--h-orange);font-weight:600;">Blockchain</span>
+          </div>
+        </div>
+
+        <div class="mission-card" style="cursor:default;border-color:rgba(196,48,48,0.25);background:linear-gradient(180deg,rgba(196,48,48,0.05),rgba(196,48,48,0.01));">
+          <div class="option-num" style="color:#C43030">PROGRAM 06</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:#C43030;margin-bottom:8px;">Housing Ownership &amp; Disaster Recovery</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.55;margin-bottom:12px;">Charitable fund strategies for housing ownership access and post-disaster community recovery — using smart contract insurance triggers, AI risk models, and blockchain title verification.</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(196,48,48,0.12);color:#C43030;font-weight:600;">Disaster Recovery</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(196,48,48,0.12);color:#C43030;font-weight:600;">Smart Contracts</span>
+            <span style="font-size:9px;padding:2px 6px;border-radius:6px;background:rgba(196,48,48,0.12);color:#C43030;font-weight:600;">AI Risk Models</span>
+          </div>
+        </div>
+
+    </div>
+
+    <!-- ── FOUR THEMATIC PILLARS ── -->
+    <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:20px 24px;margin-bottom:14px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+      <div style="font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:14px;">Four Thematic Pillars · Where Capital Is Deployed</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div style="padding:12px 14px;background:rgba(0,176,162,0.04);border-left:2px solid var(--green1);border-radius:6px;">
+          <div style="font-size:11px;font-weight:700;color:var(--green1);margin-bottom:2px;">Housing Stability</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4;">Affordable preservation · Multifamily supply · RTO &amp; CLT</div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(156,24,120,0.04);border-left:2px solid var(--purple1);border-radius:6px;">
+          <div style="font-size:11px;font-weight:700;color:var(--purple1);margin-bottom:2px;">Homeownership</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4;">Affordability gap · FTHB supply · Co-investment</div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(27,142,212,0.04);border-left:2px solid var(--cyan);border-radius:6px;">
+          <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:2px;">Small Business</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4;">Working capital · SB lending · Credit &amp; risk</div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(212,40,112,0.04);border-left:2px solid var(--pink);border-radius:6px;">
+          <div style="font-size:11px;font-weight:700;color:var(--pink);margin-bottom:2px;">Wealth-Building</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.4;">Financial literacy · Credit · Asset-building</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Variant cards ── -->
+    <div class="mission-grid">
+
+      <div class="mission-card" onclick="selectMission(this, 1)">
+        <div class="option-num">VARIANT · WEBSITE / HERO</div>
+        <div class="option-tag" style="background:rgba(27,142,212,0.10);color:var(--cyan)">Concise · Web</div>
+        <p class="mission-text">"Philanthropic capital. Innovative structures. The American Dream — for hardworking Americans."</p>
+        <div class="mission-meta">
+          <span><div class="meta-dot" style="background:var(--green1)"></div> 12 words</span>
+          <span><div class="meta-dot" style="background:var(--cyan)"></div> Hero copy</span>
+        </div>
+      </div>
+
+      <div class="mission-card" onclick="selectMission(this, 2)">
+        <div class="option-num">VARIANT · DONOR / GRANT</div>
+        <div class="option-tag" style="background:rgba(156,24,120,0.10);color:var(--purple1)">Funder-resonant</div>
+        <p class="mission-text">"MPact Mission Foundation channels philanthropic capital into impact investments through PHIGs, charitable issuance, and conduit financing — building housing, homeownership, small business, and wealth for low- and moderate-income Americans."</p>
+        <div class="mission-meta">
+          <span><div class="meta-dot" style="background:var(--green1)"></div> 31 words</span>
+          <span><div class="meta-dot" style="background:var(--purple1)"></div> Outcome-led</span>
+        </div>
+      </div>
+
+      <div class="mission-card" onclick="selectMission(this, 3)">
+        <div class="option-num">VARIANT · INTERNAL / RALLYING</div>
+        <div class="option-tag" style="background:rgba(212,40,112,0.10);color:var(--pink)">Brand · Memorable</div>
+        <p class="mission-text">"Issue. Conduit. PHIG. Three activities. Four pillars. One mission — the American Dream, financed with dignity."</p>
+        <div class="mission-meta">
+          <span><div class="meta-dot" style="background:var(--green1)"></div> 17 words</span>
+          <span><div class="meta-dot" style="background:var(--pink)"></div> Bold · Quotable</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ BOARD TRACKER ══ -->
+    <div class="sec-divider" id="board">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">🏛️</span>
+      <span class="sec-divider-label">Board of Directors · Live Tracker</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="board-tracker">
+
+      <!-- Board roster -->
+      <div class="board-list">
+        <h3>Founding Board Roster</h3>
+        <p class="sub">NC requires minimum 3 directors · IRS recommends 5–7 unrelated members for credibility</p>
+
+        <div class="board-row">
+          <div class="board-avatar av-g">FN</div>
+          <div>
+            <div class="board-name">Founder Name (TBD)</div>
+            <div class="board-role">President / Board Chair</div>
+          </div>
+          <div class="board-term">Term: 3 yrs</div>
+          <div class="board-status bs-active">● Confirmed</div>
+        </div>
+
+        <div class="board-row">
+          <div class="board-avatar av-p">CP</div>
+          <div>
+            <div class="board-name">Co-Founder / Partner (TBD)</div>
+            <div class="board-role">Treasurer · CFO Designate</div>
+          </div>
+          <div class="board-term">Term: 3 yrs</div>
+          <div class="board-status bs-active">● Confirmed</div>
+        </div>
+
+        <div class="board-row">
+          <div class="board-avatar av-vacant">+</div>
+          <div>
+            <div class="board-name vacant">Open Seat — Secretary</div>
+            <div class="board-role">Records · Compliance · Required Officer</div>
+          </div>
+          <div class="board-term">Required</div>
+          <div class="board-status bs-vacant">VACANT</div>
+        </div>
+
+        <div class="board-row">
+          <div class="board-avatar av-vacant">+</div>
+          <div>
+            <div class="board-name vacant">Open Seat — Director</div>
+            <div class="board-role">Programs · Community Liaison</div>
+          </div>
+          <div class="board-term">Recommended</div>
+          <div class="board-status bs-vacant">VACANT</div>
+        </div>
+
+        <div class="board-row">
+          <div class="board-avatar av-vacant">+</div>
+          <div>
+            <div class="board-name vacant">Open Seat — Director</div>
+            <div class="board-role">Legal Counsel · Compliance</div>
+          </div>
+          <div class="board-term">Recommended</div>
+          <div class="board-status bs-vacant">VACANT</div>
+        </div>
+
+      </div>
+
+      <!-- Board summary panel -->
+      <div class="board-summary">
+        <div class="bs-card">
+          <h4>Board Composition Status</h4>
+          <div class="bs-stat">
+            <span class="bs-stat-label">Confirmed Members</span>
+            <span class="bs-stat-val g">2</span>
+          </div>
+          <div class="bs-stat">
+            <span class="bs-stat-label">Open Seats</span>
+            <span class="bs-stat-val k">3</span>
+          </div>
+          <div class="bs-stat">
+            <span class="bs-stat-label">NC Minimum Required</span>
+            <span class="bs-stat-val gold">3</span>
+          </div>
+          <div class="bs-stat">
+            <span class="bs-stat-label">Target Composition</span>
+            <span class="bs-stat-val p">5–7</span>
+          </div>
+          <div class="bs-stat">
+            <span class="bs-stat-label">IRS Compliance</span>
+            <span class="bs-stat-val k" style="font-size:13px;letter-spacing:0.5px;">⚠ INCOMPLETE</span>
+          </div>
+        </div>
+
+        <div class="recruit-cta" onclick="window.open('MPact_Board_Recruitment_OnePager.html', '_blank')">
+          <div class="recruit-cta-arrow">→</div>
+          <div class="recruit-cta-label">Action Available</div>
+          <div class="recruit-cta-text">Open Board Recruitment One-Pager to share with prospects</div>
+        </div>
+
+        <div class="bs-card">
+          <h4>Board Skill Gaps</h4>
+          <div class="bs-stat">
+            <span class="bs-stat-label">Legal / Compliance</span>
+            <span class="bs-stat-val k" style="font-size:14px;">Open</span>
+          </div>
+          <div class="bs-stat">
+            <span class="bs-stat-label">Community / Programs</span>
+            <span class="bs-stat-val k" style="font-size:14px;">Open</span>
+          </div>
+          <div class="bs-stat">
+            <span class="bs-stat-label">Finance / Accounting</span>
+            <span class="bs-stat-val g" style="font-size:14px;">Filled</span>
+          </div>
+          <div class="bs-stat">
+            <span class="bs-stat-label">Fundraising / PR</span>
+            <span class="bs-stat-val gold" style="font-size:14px;">Pending</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ FILING DEADLINES ══ -->
+    <div class="sec-divider" id="deadlines">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">📅</span>
+      <span class="sec-divider-label">Filing Deadlines · Compliance Calendar</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="deadlines-grid">
+
+      <div class="deadline-list">
+        <h3>Upcoming Critical Deadlines</h3>
+
+        <div class="deadline-row">
+          <div class="deadline-date urgent">
+            <div class="dd-month">MAY</div>
+            <div class="dd-day">17</div>
+          </div>
+          <div>
+            <div class="deadline-title">File Articles of Incorporation</div>
+            <div class="deadline-meta">
+              <span class="deadline-pill dp-urgent">URGENT · 14 DAYS</span>
+              <span>NC Secretary of State · $60</span>
+            </div>
+          </div>
+          <div class="deadline-action">FILE →</div>
+        </div>
+
+        <div class="deadline-row">
+          <div class="deadline-date soon">
+            <div class="dd-month">MAY</div>
+            <div class="dd-day">24</div>
+          </div>
+          <div>
+            <div class="deadline-title">Apply for EIN (IRS Form SS-4)</div>
+            <div class="deadline-meta">
+              <span class="deadline-pill dp-soon">SOON · 21 DAYS</span>
+              <span>IRS · Free · Required for bank account</span>
+            </div>
+          </div>
+          <div class="deadline-action">APPLY →</div>
+        </div>
+
+        <div class="deadline-row">
+          <div class="deadline-date soon">
+            <div class="dd-month">JUN</div>
+            <div class="dd-day">15</div>
+          </div>
+          <div>
+            <div class="deadline-title">Adopt Bylaws & Hold Organizational Meeting</div>
+            <div class="deadline-meta">
+              <span class="deadline-pill dp-soon">SOON · 6 WEEKS</span>
+              <span>Internal · Records minutes</span>
+            </div>
+          </div>
+          <div class="deadline-action">SCHEDULE →</div>
+        </div>
+
+        <div class="deadline-row">
+          <div class="deadline-date">
+            <div class="dd-month">JUL</div>
+            <div class="dd-day">15</div>
+          </div>
+          <div>
+            <div class="deadline-title">File Form 1023-EZ with IRS</div>
+            <div class="deadline-meta">
+              <span class="deadline-pill dp-future">UPCOMING</span>
+              <span>Pay.gov · $275 fee · 27-month look-back rule applies</span>
+            </div>
+          </div>
+          <div class="deadline-action">PREPARE →</div>
+        </div>
+
+        <div class="deadline-row">
+          <div class="deadline-date">
+            <div class="dd-month">AUG</div>
+            <div class="dd-day">01</div>
+          </div>
+          <div>
+            <div class="deadline-title">Register NC Charitable Solicitation License</div>
+            <div class="deadline-meta">
+              <span class="deadline-pill dp-future">UPCOMING</span>
+              <span>NC DOJ · Required before fundraising</span>
+            </div>
+          </div>
+          <div class="deadline-action">PREPARE →</div>
+        </div>
+
+        <div class="deadline-row">
+          <div class="deadline-date">
+            <div class="dd-month">APR</div>
+            <div class="dd-day">15</div>
+          </div>
+          <div>
+            <div class="deadline-title">NC Annual Report (Nonprofit)</div>
+            <div class="deadline-meta">
+              <span class="deadline-pill dp-recurring">RECURRING · ANNUAL</span>
+              <span>NC SOS · Free · Due each April 15</span>
+            </div>
+          </div>
+          <div class="deadline-action">CALENDAR →</div>
+        </div>
+
+        <div class="deadline-row">
+          <div class="deadline-date">
+            <div class="dd-month">MAY</div>
+            <div class="dd-day">15</div>
+          </div>
+          <div>
+            <div class="deadline-title">IRS Form 990-N (e-Postcard)</div>
+            <div class="deadline-meta">
+              <span class="deadline-pill dp-recurring">RECURRING · ANNUAL</span>
+              <span>IRS · Due 5 months after fiscal year-end</span>
+            </div>
+          </div>
+          <div class="deadline-action">CALENDAR →</div>
+        </div>
+      </div>
+
+      <!-- Calendar widget -->
+      <div class="cal-widget">
+        <h3>May 2026</h3>
+        <p class="sub">Active month with 2 critical filings</p>
+        <div class="cal-month">
+          <div class="cal-day-header">S</div>
+          <div class="cal-day-header">M</div>
+          <div class="cal-day-header">T</div>
+          <div class="cal-day-header">W</div>
+          <div class="cal-day-header">T</div>
+          <div class="cal-day-header">F</div>
+          <div class="cal-day-header">S</div>
+          <!-- Empty start of month (May 1 = Friday) -->
+          <div class="cal-day"></div>
+          <div class="cal-day"></div>
+          <div class="cal-day"></div>
+          <div class="cal-day"></div>
+          <div class="cal-day"></div>
+          <div class="cal-day in-month">1</div>
+          <div class="cal-day in-month">2</div>
+          <!-- Today is May 3 -->
+          <div class="cal-day today">3</div>
+          <div class="cal-day in-month">4</div>
+          <div class="cal-day in-month">5</div>
+          <div class="cal-day in-month">6</div>
+          <div class="cal-day in-month">7</div>
+          <div class="cal-day in-month">8</div>
+          <div class="cal-day in-month">9</div>
+          <div class="cal-day in-month">10</div>
+          <div class="cal-day in-month">11</div>
+          <div class="cal-day in-month">12</div>
+          <div class="cal-day in-month">13</div>
+          <div class="cal-day in-month">14</div>
+          <div class="cal-day in-month">15</div>
+          <div class="cal-day in-month">16</div>
+          <div class="cal-day event">17</div>
+          <div class="cal-day in-month">18</div>
+          <div class="cal-day in-month">19</div>
+          <div class="cal-day in-month">20</div>
+          <div class="cal-day in-month">21</div>
+          <div class="cal-day in-month">22</div>
+          <div class="cal-day in-month">23</div>
+          <div class="cal-day event">24</div>
+          <div class="cal-day in-month">25</div>
+          <div class="cal-day in-month">26</div>
+          <div class="cal-day in-month">27</div>
+          <div class="cal-day in-month">28</div>
+          <div class="cal-day in-month">29</div>
+          <div class="cal-day in-month">30</div>
+          <div class="cal-day in-month">31</div>
+        </div>
+        <div class="cal-legend">
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--green1)"></div> Today</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pink)"></div> Filing due</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:rgba(28,33,48,0.2)"></div> Available</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ FORM 1023-EZ ELIGIBILITY CHECKER ══ -->
+    <div class="sec-divider" id="eligibility">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">🧮</span>
+      <span class="sec-divider-label">Form 1023-EZ Eligibility · Interactive Check</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="eligibility">
+
+      <div class="elig-card">
+        <h3>Quick Eligibility Worksheet</h3>
+        <p class="sub">Toggle "Yes" or "No" for each question. The 1023-EZ saves $325 and ~3 months of processing — but you must qualify on every criterion below.</p>
+
+        <div class="elig-q">
+          <div class="elig-q-num">1</div>
+          <div class="elig-q-body">
+            <div class="elig-q-text">Will projected gross receipts be <strong>$50,000 or less</strong> in each of the first 3 years?</div>
+            <div class="elig-toggle">
+              <button class="elig-btn yes" onclick="setElig(this, 1, 'yes')">YES</button>
+              <button class="elig-btn no"  onclick="setElig(this, 1, 'no')">NO</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="elig-q">
+          <div class="elig-q-num">2</div>
+          <div class="elig-q-body">
+            <div class="elig-q-text">Are total assets currently valued at <strong>$250,000 or less</strong>?</div>
+            <div class="elig-toggle">
+              <button class="elig-btn yes" onclick="setElig(this, 2, 'yes')">YES</button>
+              <button class="elig-btn no"  onclick="setElig(this, 2, 'no')">NO</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="elig-q">
+          <div class="elig-q-num">3</div>
+          <div class="elig-q-body">
+            <div class="elig-q-text">Was the organization formed under the laws of a <strong>U.S. state or territory</strong> (not a foreign country)?</div>
+            <div class="elig-toggle">
+              <button class="elig-btn yes" onclick="setElig(this, 3, 'yes')">YES</button>
+              <button class="elig-btn no"  onclick="setElig(this, 3, 'no')">NO</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="elig-q">
+          <div class="elig-q-num">4</div>
+          <div class="elig-q-body">
+            <div class="elig-q-text">Is the organization NOT a school, hospital, church, supporting organization, or private operating foundation?</div>
+            <div class="elig-toggle">
+              <button class="elig-btn yes" onclick="setElig(this, 4, 'yes')">YES</button>
+              <button class="elig-btn no"  onclick="setElig(this, 4, 'no')">NO</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="elig-q">
+          <div class="elig-q-num">5</div>
+          <div class="elig-q-body">
+            <div class="elig-q-text">Does the organization NOT have unrelated business income, partnership/LLC interests, or foreign activity exceeding IRS thresholds?</div>
+            <div class="elig-toggle">
+              <button class="elig-btn yes" onclick="setElig(this, 5, 'yes')">YES</button>
+              <button class="elig-btn no"  onclick="setElig(this, 5, 'no')">NO</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Result panel -->
+      <div class="elig-result">
+        <h4>Eligibility Verdict</h4>
+
+        <div class="elig-verdict-card" id="verdictCard">
+          <div class="elig-verdict-icon" id="verdictIcon">⏳</div>
+          <div class="elig-verdict-title" id="verdictTitle">AWAITING INPUT</div>
+          <div class="elig-verdict-sub" id="verdictSub">Answer all 5 questions to receive an instant determination.</div>
+        </div>
+
+        <div class="elig-summary">
+          <div class="elig-stat">
+            <div class="elig-stat-val fee" id="feeVal">$—</div>
+            <div class="elig-stat-label">Filing Fee</div>
+          </div>
+          <div class="elig-stat">
+            <div class="elig-stat-val time" id="timeVal">—</div>
+            <div class="elig-stat-label">Avg. Processing</div>
+          </div>
+        </div>
+
+        <div class="elig-progress-row">
+          <span>Questions answered:</span>
+          <span id="answeredCount" style="color:var(--green1);font-weight:700;">0 / 5</span>
+        </div>
+        <button class="elig-reset-btn" onclick="resetElig()">↺ Reset Checker</button>
+        <div style="margin-top:14px;">
+          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Reviewed &amp; signed off by:</div>
+          <div class="signoff-row" id="eligSignoffs">
+            <span class="signoff-badge" data-role="legal" onclick="toggleSignoff(this,'eligSignoffs')">⚖️ Legal Officer</span>
+            <span class="signoff-badge" data-role="treasurer" onclick="toggleSignoff(this,'eligSignoffs')">💰 Treasurer</span>
+            <span class="signoff-badge" data-role="founder" onclick="toggleSignoff(this,'eligSignoffs')">🏛 Founder</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ DOCUMENT VAULT ══ -->
+    <div class="sec-divider" id="vault">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">🗄</span>
+      <span class="sec-divider-label">Document Vault · Working Files</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="vault-grid">
+
+      <div class="vault-card" onclick="copyDocName('MPact_Articles_of_Incorporation.docx')">
+        <div class="vault-icon vi-g">DOCX</div>
+        <div class="vault-name">Articles of Incorporation</div>
+        <div class="vault-meta">
+          <span>NC Form N-01</span>
+          <span>•</span>
+          <span>v4.0</span>
+        </div>
+        <div class="vault-owner"><span class="vault-owner-dot" style="background:var(--purple1)"></span><span class="vault-owner-text">Owner:</span><span class="vault-owner-name" style="color:var(--purple1)"> Legal Officer</span></div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Bylaws.docx')">
+        <div class="vault-icon vi-p">DOCX</div>
+        <div class="vault-name">Organizational Bylaws</div>
+        <div class="vault-meta">
+          <span>13 Articles · Inv Cmte</span>
+          <span>•</span>
+          <span>v4.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Conflict_of_Interest_Policy.docx')">
+        <div class="vault-icon vi-c">DOCX</div>
+        <div class="vault-name">Conflict of Interest Policy</div>
+        <div class="vault-meta">
+          <span>IRS Required</span>
+          <span>•</span>
+          <span>+ Annual Disclosure</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Form_1023_Narrative.docx')">
+        <div class="vault-icon vi-gold">DOCX</div>
+        <div class="vault-name">Form 1023 Narrative of Activities</div>
+        <div class="vault-meta">
+          <span>3 Activities × 4 Pillars</span>
+          <span>•</span>
+          <span>v4.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_PHIG_Policy.docx')">
+        <div class="vault-icon vi-c">DOCX</div>
+        <div class="vault-name">PHIG Policy &amp; Procedures</div>
+        <div class="vault-meta">
+          <span>Activity 03</span>
+          <span>•</span>
+          <span>NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_PRI_Policy.docx')">
+        <div class="vault-icon vi-p">DOCX</div>
+        <div class="vault-name">Program-Related Investment Policy</div>
+        <div class="vault-meta">
+          <span>IRC §4944(c)</span>
+          <span>•</span>
+          <span>NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Recoverable_Grant_Policy.docx')">
+        <div class="vault-icon vi-gold">DOCX</div>
+        <div class="vault-name">Recoverable Grant Policy</div>
+        <div class="vault-meta">
+          <span>Conditional repayment</span>
+          <span>•</span>
+          <span>NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_NonProfit_Issuer_Policy.docx')">
+        <div class="vault-icon vi-g">DOCX</div>
+        <div class="vault-name">Non-Profit Issuer Policy</div>
+        <div class="vault-meta">
+          <span>Activity 01</span>
+          <span>•</span>
+          <span>NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Conduit_Issuer_Policy.docx')">
+        <div class="vault-icon vi-k">DOCX</div>
+        <div class="vault-name">Conduit Issuer Policy</div>
+        <div class="vault-meta">
+          <span>Activity 02 · IRC §145</span>
+          <span>•</span>
+          <span>NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Fiscal_Sponsorship_Policy.docx')" style="border-color:rgba(27,142,212,0.30);background:linear-gradient(180deg,rgba(27,142,212,0.04),rgba(27,142,212,0.01));">
+        <div class="vault-icon vi-k" style="background:rgba(27,142,212,0.12);color:var(--cyan);">DOCX</div>
+        <div class="vault-name">Fiscal Sponsorship Policy</div>
+        <div class="vault-meta">
+          <span>Activity 04 · Models A &amp; C</span>
+          <span>•</span>
+          <span style="color:var(--cyan);font-weight:700;">NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Board_Recruitment_OnePager.html')">
+        <div class="vault-icon vi-k">HTML</div>
+        <div class="vault-name">Board Recruitment One-Pager</div>
+        <div class="vault-meta">
+          <span>External</span>
+          <span>•</span>
+          <span>v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO SHARE</div>
+      </div>
+
+      <div class="vault-card" onclick="copyDocName('MPact_Related_Party_Transaction_Policy.docx')" style="border-color:rgba(212,40,112,0.30);background:linear-gradient(180deg,rgba(212,40,112,0.04),rgba(212,40,112,0.01));">
+        <div class="vault-icon vi-k" style="background:rgba(212,40,112,0.12);color:var(--pink);">DOCX</div>
+        <div class="vault-name">Related-Party Transaction Policy</div>
+        <div class="vault-meta">
+          <span>Sister Organization Safeguard</span>
+          <span>•</span>
+          <span style="color:var(--pink);font-weight:700;">NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Organizational_Meeting_Minutes.docx')" style="border-color:rgba(156,24,120,0.30);background:linear-gradient(180deg,rgba(156,24,120,0.04),rgba(156,24,120,0.01));">
+        <div class="vault-icon vi-p" style="background:rgba(156,24,120,0.12);color:var(--purple1);">DOCX</div>
+        <div class="vault-name">Organizational Meeting Minutes</div>
+        <div class="vault-meta">
+          <span>Internal · First Board</span>
+          <span>•</span>
+          <span style="color:var(--purple1);font-weight:700;">NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO USE</div>
+      </div>
+
+      <div class="vault-card" onclick="window.open('MPact_Financial_Projections.xlsx')" style="border-color:rgba(0,176,162,0.30);background:linear-gradient(180deg,rgba(0,176,162,0.04),rgba(0,176,162,0.01));">
+        <div class="vault-icon vi-g" style="background:rgba(0,176,162,0.12);color:var(--green1);">XLSX</div>
+        <div class="vault-name">3-Year Financial Projections</div>
+        <div class="vault-meta">
+          <span>Form 1023 Exhibit · 5 Tabs</span>
+          <span>•</span>
+          <span style="color:var(--green1);font-weight:700;">NEW v1.0</span>
+        </div>
+        <div class="vault-status vs-ready">● READY TO REVIEW</div>
+      </div>
+
+    </div>
+
+    <!-- ══ ACTIVITY FEED ══ -->
+    <div class="sec-divider" id="activity">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">📡</span>
+      <span class="sec-divider-label">Recent Activity · Audit Trail</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="activity-wrapper">
+      <div class="activity-header">
+        <div>
+          <h3>Formation Activity Log</h3>
+          <p style="font-size:11px;color:var(--muted);margin-top:2px;">Auto-captured from dashboard actions and document changes</p>
+        </div>
+        <div class="activity-filter">
+          <button class="af-btn active">ALL</button>
+          <button class="af-btn">DOCS</button>
+          <button class="af-btn">MODULES</button>
+          <button class="af-btn">SYSTEM</button>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-create" style="background:rgba(0,176,162,0.12);color:var(--green1);">📊</div>
+        <div class="act-content">
+          <strong>v6 Project Plan Completion — Final 3 Documents Delivered</strong> — package now <span style="color:var(--green1);font-weight:700;">13 of 14 deliverables complete</span>: <span style="color:var(--pink);">Related-Party Transaction Policy</span> (MPact Capital sister-organization safeguard with arm's-length, comparability data, and Treas. Reg. 53.4958-6 procedures), <span style="color:var(--purple1);">Organizational Meeting Minutes</span> template (19 sections covering bylaws adoption, officer election, all 11 policies, banking, Form 1023 authorization, sister organization relationship disclosure), and <span style="color:var(--green1);">3-Year Financial Projections</span> workbook (5 tabs · Cover · Revenue · Expenses · Balance Sheet · Assumptions · 90 formulas, zero errors).<span class="act-tag tag-doc">3 New · 13/14 Ready</span>
+          <div class="act-meta">RPT Policy hardens IRS defensibility for sister organization relationship; Org Meeting Minutes ready to adopt entire governance package in single sitting; Projections support §170(b)(1)(A)(vi) public charity classification</div>
+        </div>
+        <div class="act-time">JUST NOW</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-update" style="background:rgba(27,142,212,0.12);color:var(--cyan);">⚖️</div>
+        <div class="act-content">
+          <strong>v5 Charitable Finance Platform Overhaul — Fiscal Sponsorship Added</strong> — package elevated to <span style="color:var(--green1);">four primary activities</span>: Non-Profit Issuer · Conduit Issuer · PHIG Sponsor · <span style="color:var(--cyan);">Fiscal Sponsor</span> (Model A &amp; Model C). Variance power retained on all sponsored funds. Aligned with NNFS &amp; Greg Colvin framework.<span class="act-tag tag-doc">10 Docs · New Policy Added</span>
+          <div class="act-meta">Mission rewritten to "charitable finance platform" framing · Articles Art. III adds fiscal sponsorship purpose · Bylaws Art. IX expanded · Form 1023 narrative adds Section 6 fiscal sponsor · NEW Fiscal Sponsorship Policy &amp; Procedures (10 articles, Models A &amp; C, variance power, fee schedules)</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-update" style="background:rgba(212,40,112,0.12);color:var(--pink);">🏛️</div>
+        <div class="act-content">
+          <strong>v4 Architectural Overhaul — Charitable Intermediary Model</strong> — package restructured around primary activities (Non-Profit Issuer · Conduit Issuer · PHIG Sponsor) deploying capital across four thematic pillars. Modeled in part on Realize Impact (501(c)(3), EIN 46-3594732).<span class="act-tag tag-doc">9 Docs Updated</span>
+          <div class="act-meta">Mission rewritten · Articles purposes restructured · Bylaws Article IX added · Form 1023 narrative rebuilt · 5 new policies added (PHIG, PRI, Recoverable Grant, Non-Profit Issuer, Conduit Issuer)</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-update">🏗️</div>
+        <div class="act-content">
+          <strong>Four pillars reframed to capital &amp; supply-side framing</strong> — affordable preservation, FTHB affordability gap, working capital lending, with §4944(c) PRI compliance throughout<span class="act-tag tag-doc">Form 1023 v3</span>
+          <div class="act-meta">Pillars now align with structured-finance methods: multifamily supply · FTHB co-investment · SB credit &amp; risk structures</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-update">🇺🇸</div>
+        <div class="act-content">
+          <strong>Mission refined to American Dream framework</strong> — market-based solutions, financial tools of dignity, and a four-method delivery model<span class="act-tag tag-mod">Mission v3</span>
+          <div class="act-meta">All four governance docs (Articles, Bylaws, COI, 1023 Narrative) regenerated with the new framing · Recruitment one-pager updated</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-create">📜</div>
+        <div class="act-content">
+          <strong>Bylaws, COI Policy, and Form 1023 Narrative</strong> generated as full governance package<span class="act-tag tag-doc">3 Documents</span>
+          <div class="act-meta">All three docs reflect the new four-pillar mission and pass IRS Form 1023 requirements</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-update">🎯</div>
+        <div class="act-content">
+          <strong>Mission statement refined</strong> to four pillars: housing, homeownership, small business, wealth-building<span class="act-tag tag-mod">Mission v2</span>
+          <div class="act-meta">Removed CDFI/MDI references · Now propagates through all governance documents</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-create">📜</div>
+        <div class="act-content">
+          <strong>Articles of Incorporation</strong> drafted with IRS-compliant 501(c)(3) language<span class="act-tag tag-doc">Document</span>
+          <div class="act-meta">Includes purpose clause (Article III) and required dissolution clause (Article V)</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-action">📋</div>
+        <div class="act-content">
+          <strong>Board Recruitment One-Pager</strong> created and ready to share<span class="act-tag tag-doc">Document</span>
+          <div class="act-meta">Branded HTML asset for prospective director outreach</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-update">🏛️</div>
+        <div class="act-content">
+          <strong>Board Tracker module</strong> activated · 2 of 5 seats filled<span class="act-tag tag-mod">Module</span>
+          <div class="act-meta">3 open seats flagged: Secretary, Programs Director, Legal Counsel</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-alert">⚠️</div>
+        <div class="act-content">
+          <strong>IRS compliance gap detected</strong> — board below IRS-recommended composition<span class="act-tag tag-sys">Alert</span>
+          <div class="act-meta">Current 2 members; IRS recommends 5–7 unrelated directors for credibility</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-system">🚀</div>
+        <div class="act-content">
+          <strong>Dashboard v2</strong> initialized with 6 admin modules + Phase Journey + Quick Actions<span class="act-tag tag-sys">System</span>
+          <div class="act-meta">Mission · Board · Deadlines · Eligibility · Vault · Activity Feed</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon ai-system">✓</div>
+        <div class="act-content">
+          <strong>Dashboard v1</strong> deployed with foundational modules<span class="act-tag tag-sys">System</span>
+          <div class="act-meta">Filing checklist (12 steps), Cost assessment, Critical roles, Key documents</div>
+        </div>
+        <div class="act-time">EARLIER</div>
+      </div>
+
+    </div>
+
+    <!-- ══ SUGGESTED FUTURE MODULES ══ -->
+    <div class="sec-divider" id="modules">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">✨</span>
+      <span class="sec-divider-label">Suggested Future Modules · Phase 2 Roadmap</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="modules-grid">
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-high">PHASE 2 · HIGH</div>
+        <div class="ms-icon">💸</div>
+        <div class="ms-name">Donor & Funder CRM</div>
+        <div class="ms-desc">Track relationships, gift history, communications, and pledge pipelines. Tag by capacity, affinity, and program interest.</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Fundraising</span>
+          <span class="ms-tag">Post-launch</span>
+        </div>
+      </div>
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-high">PHASE 2 · HIGH</div>
+        <div class="ms-icon">📈</div>
+        <div class="ms-name">Grant Pipeline Manager</div>
+        <div class="ms-desc">Manage grant prospects from research → application → award → reporting. Deadline alerts and outcome tracking by funder.</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Revenue</span>
+          <span class="ms-tag">Operations</span>
+        </div>
+      </div>
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-high">PHASE 2 · HIGH</div>
+        <div class="ms-icon">💼</div>
+        <div class="ms-name">Financial Dashboard</div>
+        <div class="ms-desc">Live view of cash position, monthly burn, fund balances, and budget vs. actual. Treasurer-led, board-visible.</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Treasury</span>
+          <span class="ms-tag">Compliance</span>
+        </div>
+      </div>
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-mid">PHASE 3 · MID</div>
+        <div class="ms-icon">📊</div>
+        <div class="ms-name">Program Impact Metrics</div>
+        <div class="ms-desc">Capture outputs and outcomes for each program. Powers grant reporting, the IRS 990, and annual report storytelling.</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Programs</span>
+          <span class="ms-tag">Reporting</span>
+        </div>
+      </div>
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-mid">PHASE 3 · MID</div>
+        <div class="ms-icon">🤝</div>
+        <div class="ms-name">Volunteer Coordinator</div>
+        <div class="ms-desc">Onboarding, hours logging, role assignments, background-check status. Critical once programs launch with volunteers.</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Operations</span>
+          <span class="ms-tag">Programs</span>
+        </div>
+      </div>
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-mid">PHASE 3 · MID</div>
+        <div class="ms-icon">🛡</div>
+        <div class="ms-name">Policy & Risk Library</div>
+        <div class="ms-desc">Centralized whistleblower, document retention, gift acceptance, conflict of interest, and acceptable-use policies with version history.</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Governance</span>
+          <span class="ms-tag">Compliance</span>
+        </div>
+      </div>
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-mid">PHASE 3 · MID</div>
+        <div class="ms-icon">🗳</div>
+        <div class="ms-name">Board Meeting Workspace</div>
+        <div class="ms-desc">Agenda builder, board packet attachments, voting capture, and auto-generated minutes. Direct feed to organizational records.</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Governance</span>
+          <span class="ms-tag">Records</span>
+        </div>
+      </div>
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-low">PHASE 4 · LATER</div>
+        <div class="ms-icon">📰</div>
+        <div class="ms-name">Annual Report Builder</div>
+        <div class="ms-desc">Pulls from Programs, Financials, and Donor modules to assemble brand-aligned annual reports for stakeholders.</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Communications</span>
+          <span class="ms-tag">Marketing</span>
+        </div>
+      </div>
+
+      <div class="module-suggest">
+        <div class="ms-priority prio-low">PHASE 4 · LATER</div>
+        <div class="ms-icon">🔍</div>
+        <div class="ms-name">Audit & 990 Workspace</div>
+        <div class="ms-desc">Annual audit prep checklists, document gathering, and Form 990 series staging (990-N → 990-EZ → 990).</div>
+        <div class="ms-tag-row">
+          <span class="ms-tag">Annual</span>
+          <span class="ms-tag">CPA</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="dash-footer">
+      <div>
+        <p>MPact Mission Foundation · Admin Dashboard v2 · 501(c)(3) Formation</p>
+        <p style="margin-top:3px;opacity:0.5;">North Carolina · Charlotte, NC · 2026 · Linked to v1 dashboard for filing checklist & cost reference</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg width="20" height="26" viewBox="0 0 220 280" fill="none" opacity="0.42" style="flex-shrink:0;" aria-hidden="true">
+      <defs>
+        <linearGradient id="ft-s" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stop-color="#00B0A2"/>
+          <stop offset="45%"  stop-color="#9C1878"/>
+          <stop offset="100%" stop-color="#D42870"/>
+        </linearGradient>
+        <linearGradient id="ft-f" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#00B0A2" stop-opacity="0.09"/>
+          <stop offset="100%" stop-color="#0E0C0A" stop-opacity="0.32"/>
+        </linearGradient>
+        <linearGradient id="ft-l" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#1B8ED4"/>
+          <stop offset="50%"  stop-color="#9C1878"/>
+          <stop offset="100%" stop-color="#F0B400"/>
+        </linearGradient>
+        <clipPath id="ft-c"><path d="M 16,16 L 204,16 L 204,156 Q 204,226 110,268 Q 16,226 16,156 Z"/></clipPath>
+      </defs>
+      <!-- Shield body -->
+      <path d="M 16,16 L 204,16 L 204,156 Q 204,226 110,268 Q 16,226 16,156 Z"
+            fill="url(#ft-f)" stroke="url(#ft-s)" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M 24,24 L 196,24 L 196,154 Q 196,218 110,258 Q 24,218 24,154 Z"
+            fill="none" stroke="url(#ft-s)" stroke-width="0.7" stroke-linejoin="round" opacity="0.35"/>
+      <!-- Bar chart mark inside shield -->
+      <g clip-path="url(#ft-c)">
+        <g transform="translate(110,155) skewX(-8) translate(-110,-155)">
+          <rect x="37"  y="70"  width="24" height="130" rx="4" fill="#1B8ED4" opacity="0.88"/>
+          <rect x="66"  y="145" width="24" height="55"  rx="4" fill="#00B0A2" opacity="0.72"/>
+          <rect x="95"  y="105" width="24" height="95"  rx="4" fill="#9C1878" opacity="0.88"/>
+          <rect x="124" y="145" width="24" height="55"  rx="4" fill="#D42870" opacity="0.72"/>
+          <rect x="153" y="70"  width="24" height="130" rx="4" fill="#F0B400" opacity="0.88"/>
+          <polyline points="49,70 78,145 107,105 136,145 165,70"
+                    stroke="url(#ft-l)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+          <circle cx="49"  cy="70"  r="4.5" fill="#1B8ED4"/>
+          <circle cx="107" cy="105" r="3.5" fill="#9C1878"/>
+          <circle cx="165" cy="70"  r="4.5" fill="#F0B400"/>
+        </g>
+      </g>
+      <!-- Top and bottom accent dots -->
+      <circle cx="110" cy="16"  r="5" fill="#00B0A2"/>
+      <circle cx="110" cy="268" r="5" fill="#D42870"/>
+    </svg>
+        <p style="font-size:9px;letter-spacing:3px;text-transform:uppercase;">MPact Mission Foundation</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════
+// V3 MULTI-USER DASHBOARD — COMPLETE JS
+// ═══════════════════════════════════════════
+
+// ── Role definitions ──
+const ROLES = {
+  founder: {
+    label: "Founder / CEO",
+    color: "var(--green1)",
+    dot: "#06D6A0",
+    actions: [
+      { id:"art", icon:"📜", priority:"URGENT", cls:"urgent", title:"Finalize Articles of Incorporation",
+        desc:"Review the IRS-compliant template, fill in director and registered-agent details, then file with NC SOS.",
+        daysOut:14, note:"$60 filing fee", owner:"legal" },
+      { id:"mission", icon:"🎯", priority:"DECIDE", cls:"next", title:"Confirm Mission Statement v5",
+        desc:"The four-activity platform mission is drafted. Confirm adoption to lock language in all governance docs.",
+        daysOut:7, note:"Foundational", owner:"founder" },
+      { id:"board", icon:"👥", priority:"RECRUIT", cls:"soon", title:"Fill 3 Open Board Seats",
+        desc:"Need Secretary, Programs Director, and Legal Counsel to meet IRS-recommended 5–7 member composition.",
+        daysOut:30, note:"One-pager ready", owner:"founder" },
+      { id:"ein", icon:"🆔", priority:"QUEUED", cls:"queue", title:"Apply for IRS EIN",
+        desc:"Free, instant approval at IRS.gov. Required before opening corporate bank account or filing Form 1023.",
+        daysOut:21, note:"Free · Instant", owner:"treasurer" }
+    ]
+  },
+  legal: {
+    label: "Legal Officer",
+    color: "var(--purple1)",
+    dot: "#9C1878",
+    actions: [
+      { id:"art", icon:"⚖️", priority:"REVIEW NOW", cls:"urgent", title:"Review Articles of Incorporation",
+        desc:"Confirm NC SOS compliance, verify 7 charitable purposes listed, confirm registered agent details before filing.",
+        daysOut:10, note:"NC SOS · $60", owner:"legal" },
+      { id:"rpt", icon:"🔗", priority:"CRITICAL", cls:"urgent", title:"Review Related-Party Transaction Policy",
+        desc:"MPact Mission Foundation's relationship as sister organization to MPact Capital requires this policy before IRS filing. Verify Treas. Reg. 53.4958-6 rebuttable presumption procedures.",
+        daysOut:7, note:"IRS Scrutiny Risk", owner:"legal" },
+      { id:"coi", icon:"📋", priority:"ACTION", cls:"next", title:"Collect COI Disclosure Statements",
+        desc:"Each Director must sign the annual COI Acknowledgment and Disclosure Statement at or before the organizational meeting.",
+        daysOut:21, note:"All 5 directors", owner:"legal" },
+      { id:"1023", icon:"📑", priority:"PLAN", cls:"soon", title:"Prepare Form 1023 Filing Package",
+        desc:"Narrative is complete. Coordinate with tax counsel to review PRI structure and attach financial projections exhibit.",
+        daysOut:45, note:"Tax counsel required", owner:"legal" }
+    ]
+  },
+  treasurer: {
+    label: "Treasurer",
+    color: "var(--gold)",
+    dot: "#FFB700",
+    actions: [
+      { id:"bank", icon:"🏦", priority:"URGENT", cls:"urgent", title:"Open Corporate Bank Account",
+        desc:"Requires EIN + filed Articles. Implement dual-signature controls for disbursements ≥ $5,000 per banking resolution.",
+        daysOut:10, note:"After EIN & Articles", owner:"treasurer" },
+      { id:"proj", icon:"📊", priority:"REVIEW", cls:"next", title:"Review 3-Year Financial Projections",
+        desc:"Form 1023 exhibit is drafted (5 tabs, 90 formulas). Verify PHIG, conduit fee, and fiscal sponsorship assumptions match pipeline.",
+        daysOut:14, note:"Form 1023 Exhibit", owner:"treasurer" },
+      { id:"insurance", icon:"🛡️", priority:"ACTION", cls:"soon", title:"Procure D&O and GL Insurance",
+        desc:"Obtain quotes for Directors & Officers liability, general liability, and professional liability. Present to Board.",
+        daysOut:30, note:"Protects all directors", owner:"treasurer" },
+      { id:"audit", icon:"🧾", priority:"PLAN", cls:"queue", title:"Identify Accountant / Auditor",
+        desc:"Engage CPA for initial bookkeeping setup (accrual basis), tax return (Form 990) preparation, and Year 3+ audit readiness.",
+        daysOut:60, note:"Accrual basis required", owner:"treasurer" }
+    ]
+  },
+  secretary: {
+    label: "Secretary",
+    color: "var(--cyan)",
+    dot: "#00A4C8",
+    actions: [
+      { id:"minutes", icon:"📝", priority:"DRAFT NOW", cls:"urgent", title:"Prepare Organizational Meeting Minutes",
+        desc:"Template is complete with 19 sections covering all policies, officer elections, Form 1023 authorization, and sister organization relationship disclosure.",
+        daysOut:14, note:"All policies in scope", owner:"secretary" },
+      { id:"regagent", icon:"📌", priority:"ACTION", cls:"next", title:"Confirm Registered Agent",
+        desc:"Designate registered agent and principal office address before filing Articles of Incorporation with NC SOS.",
+        daysOut:7, note:"Required for Articles", owner:"secretary" },
+      { id:"calendar", icon:"📅", priority:"SCHEDULE", cls:"soon", title:"Set Board Meeting Calendar",
+        desc:"Schedule first year of quarterly board meetings. Coordinate with Chair. Post dates in shared calendar.",
+        daysOut:21, note:"4 meetings/year", owner:"secretary" },
+      { id:"records", icon:"🗄️", priority:"PLAN", cls:"queue", title:"Set Up Records Management System",
+        desc:"Establish minute book, policy registry, director disclosure files. Download and organize the full document package.",
+        daysOut:30, note:"Vault: 13 docs ready", owner:"secretary" }
+    ]
+  },
+  observer: {
+    label: "Board Observer",
+    color: "var(--pink)",
+    dot: "#CC1155",
+    actions: [
+      { id:"review_mission", icon:"🎯", priority:"READ", cls:"next", title:"Review Adopted Mission Statement",
+        desc:"The v5 charitable finance platform mission has been adopted. Four activities: Issuer · Conduit · PHIG · Fiscal Sponsor.",
+        daysOut:7, note:"v5 adopted", owner:"founder" },
+      { id:"review_docs", icon:"📄", priority:"READ", cls:"soon", title:"Review Governance Package",
+        desc:"13/14 documents are ready. Review Articles, Bylaws, Form 1023 Narrative, and the 3-year financial projections.",
+        daysOut:14, note:"13/14 ready", owner:"legal" },
+      { id:"review_proj", icon:"📊", priority:"READ", cls:"soon", title:"Review Financial Projections",
+        desc:"3-year pro forma showing public charity support test, revenue diversification, and program expense breakdown.",
+        daysOut:14, note:"XLSX · 5 tabs", owner:"treasurer" },
+      { id:"next_meeting", icon:"📆", priority:"CALENDAR", cls:"queue", title:"Attend First Board Meeting",
+        desc:"Organizational meeting will adopt all policies, elect officers, and authorize Form 1023 filing. Meeting date TBD.",
+        daysOut:21, note:"All directors required", owner:"secretary" }
+    ]
+  }
+};
+
+const OWNER_META = {
+  founder:   { label: "Founder / CEO",   color: "var(--green1)", dot: "#06D6A0" },
+  legal:     { label: "Legal Officer",   color: "var(--purple1)", dot: "#9C1878" },
+  treasurer: { label: "Treasurer",       color: "var(--gold)",    dot: "#FFB700" },
+  secretary: { label: "Secretary",       color: "var(--cyan)",    dot: "#00A4C8" },
+  observer:  { label: "Board Observer",  color: "var(--pink)",    dot: "#CC1155" },
+};
+
+// ── localStorage helpers ──
+const LS = {
+  get(k, fallback = null) {
+    try { const v = localStorage.getItem('mmf_' + k); return v !== null ? JSON.parse(v) : fallback; } catch { return fallback; }
+  },
+  set(k, v) {
+    try { localStorage.setItem('mmf_' + k, JSON.stringify(v)); } catch {}
+  }
+};
+
+// ── Toast ──
+let _toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── Copy doc name helper (replaces broken window.open) ──
+function copyDocName(fname) {
+  navigator.clipboard.writeText(fname).then(() => showToast('Filename copied: ' + fname));
+}
+
+// ── Role system ──
+let currentRole = LS.get('role', 'founder');
+
+function setRole(role) {
+  currentRole = role;
+  LS.set('role', role);
+  document.querySelectorAll('.role-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.role === role);
+  });
+  document.getElementById('sessionRole').textContent = ROLES[role].label;
+  LS.set('lastSeen_' + role, new Date().toISOString());
+  renderQuickActions();
+  updateRoleHighlights();
+  showToast('Switched to ' + ROLES[role].label + ' view');
+}
+
+function updateRoleHighlights() {
+  const meta = ROLES[currentRole];
+  document.getElementById('roleBar').style.borderBottomColor = meta.color.replace('var(','').replace(')','');
+}
+
+// ── Quick Actions renderer ──
+function daysFromNow(n) {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function renderQuickActions() {
+  const hub = document.getElementById('quickActionsHub');
+  const actions = ROLES[currentRole].actions;
+  const completedIds = LS.get('completed_tasks', {});
+
+  hub.innerHTML = actions.map(a => {
+    const isDone = completedIds[a.id];
+    const ownerMeta = OWNER_META[a.owner];
+    return `<div class="qa-card ${a.cls}${isDone ? ' completed' : ''}" id="qa_${a.id}">
+      <div class="qa-header">
+        <span class="qa-icon">${a.icon}</span>
+        <span class="qa-priority">${a.priority}</span>
+      </div>
+      <div class="qa-title">${a.title}</div>
+      <div class="qa-desc">${a.desc}</div>
+      <div class="qa-meta">
+        <span class="qa-meta-item bold">Due ${daysFromNow(a.daysOut)}</span>
+        <span class="qa-meta-item">${a.note}</span>
+      </div>
+      <div class="qa-assignment">
+        <span class="qa-owner-dot" style="background:${ownerMeta.dot}"></span>
+        <span class="qa-owner-label">OWNER: </span>
+        <span class="qa-owner-name" style="color:${ownerMeta.color}">${ownerMeta.label}</span>
+        <button class="qa-complete-btn${isDone ? ' done' : ''}" onclick="toggleTask('${a.id}')">${isDone ? '✓ Done' : 'Mark Done'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTask(id) {
+  const tasks = LS.get('completed_tasks', {});
+  tasks[id] = !tasks[id];
+  LS.set('completed_tasks', tasks);
+  LS.set('task_' + id + '_by', ROLES[currentRole].label);
+  LS.set('task_' + id + '_at', new Date().toLocaleString());
+  renderQuickActions();
+  updateProgressStats();
+  showToast(tasks[id] ? '✓ Task marked complete' : 'Task reopened');
+}
+
+// ── Progress stats updater ──
+function updateProgressStats() {
+  const tasks = LS.get('completed_tasks', {});
+  const totalTasks = 4;
+  const done = Object.values(tasks).filter(Boolean).length;
+  const pct = Math.round((done / totalTasks) * 30) + 22;
+  const el = document.querySelector('.pj-overall-pct');
+  if (el) el.textContent = Math.min(pct, 100) + '%';
+}
+
+// ── Mission selection (fixed — primary card stays locked) ──
+function selectMission(card, num) {
+  document.querySelectorAll('.mission-card:not([style*="cursor: default"])').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  LS.set('selected_mission', num);
+  LS.set('mission_selected_by', ROLES[currentRole].label);
+  LS.set('mission_selected_at', new Date().toLocaleString());
+  showToast('Mission option ' + num + ' selected · Saved by ' + ROLES[currentRole].label);
+}
+
+// ── Eligibility checker ──
+const eligAnswers = LS.get('elig_answers', {});
+function setElig(btn, qNum, answer) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.elig-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  eligAnswers[qNum] = answer;
+  LS.set('elig_answers', eligAnswers);
+  LS.set('elig_answered_by', ROLES[currentRole].label);
+  updateVerdict();
+}
+
+function resetElig() {
+  Object.keys(eligAnswers).forEach(k => delete eligAnswers[k]);
+  LS.set('elig_answers', {});
+  document.querySelectorAll('.elig-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('answeredCount').textContent = '0 / 5';
+  const vc = document.getElementById('verdictCard');
+  vc.classList.remove('eligible', 'ineligible');
+  document.getElementById('verdictIcon').textContent = '⏳';
+  document.getElementById('verdictTitle').textContent = 'AWAITING INPUT';
+  document.getElementById('verdictSub').textContent = 'Answer all 5 questions to receive an instant determination.';
+  document.getElementById('feeVal').textContent = '$—';
+  document.getElementById('timeVal').textContent = '—';
+  showToast('Eligibility checker reset');
+}
+
+function updateVerdict() {
+  const total = Object.keys(eligAnswers).length;
+  document.getElementById('answeredCount').textContent = total + ' / 5';
+  if (total < 5) return;
+  const allYes = [1,2,3,4,5].every(n => eligAnswers[n] === 'yes');
+  const vc = document.getElementById('verdictCard');
+  vc.classList.remove('eligible', 'ineligible');
+  if (allYes) {
+    vc.classList.add('eligible');
+    document.getElementById('verdictIcon').textContent = '✓';
+    document.getElementById('verdictTitle').textContent = 'ELIGIBLE FOR FORM 1023-EZ';
+    document.getElementById('verdictSub').textContent = 'You qualify for the streamlined 3-page application. Faster approval, lower fee, less paperwork.';
+    document.getElementById('feeVal').textContent = '$275';
+    document.getElementById('timeVal').textContent = '2-4 WK';
+  } else {
+    vc.classList.add('ineligible');
+    document.getElementById('verdictIcon').textContent = '⚠';
+    document.getElementById('verdictTitle').textContent = 'USE FULL FORM 1023';
+    document.getElementById('verdictSub').textContent = 'One or more answers disqualify you from the EZ form. The full Form 1023 is required for your situation.';
+    document.getElementById('feeVal').textContent = '$600';
+    document.getElementById('timeVal').textContent = '3-6 MO';
+  }
+  LS.set('elig_verdict', allYes ? 'ez' : 'full');
+}
+
+// ── Sign-off badges ──
+function toggleSignoff(badge, groupId) {
+  const role = badge.dataset.role || currentRole;
+  const key = 'signoff_' + groupId + '_' + role;
+  const current = LS.get(key, false);
+  badge.classList.toggle('signed', !current);
+  LS.set(key, !current);
+  if (!current) {
+    LS.set(key + '_by', ROLES[currentRole].label);
+    LS.set(key + '_at', new Date().toLocaleString());
+    showToast('✓ Signed off as ' + ROLES[currentRole].label);
+  } else {
+    showToast('Sign-off removed');
+  }
+}
+
+// ── Activity feed filter (FIXED — actually filters) ──
+document.querySelectorAll('.af-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.af-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.textContent.trim();
+    document.querySelectorAll('.activity-item').forEach(item => {
+      if (filter === 'ALL') { item.style.display = ''; return; }
+      const hasDocs = item.querySelector('.tag-doc');
+      const hasMods = item.querySelector('.tag-mod');
+      if (filter === 'DOCS') item.style.display = hasDocs ? '' : 'none';
+      else if (filter === 'MODULES') item.style.display = hasMods ? '' : 'none';
+      else if (filter === 'SYSTEM') item.style.display = (!hasDocs && !hasMods) ? '' : 'none';
+    });
+  });
+});
+
+// ── Nav active state: IntersectionObserver (FIXED) ──
+const navLinks = document.querySelectorAll('.nav-item[href^="#"]');
+const sections = document.querySelectorAll('.sec-divider[id]');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -60% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+navLinks.forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ── Restore persisted state on load ──
+function restoreState() {
+  // Role
+  setRole(LS.get('role', 'founder'));
+  document.getElementById('sessionTime').textContent = 'Session: ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+  // Eligibility answers
+  const savedAnswers = LS.get('elig_answers', {});
+  Object.assign(eligAnswers, savedAnswers);
+  if (Object.keys(savedAnswers).length > 0) {
+    Object.entries(savedAnswers).forEach(([q, ans]) => {
+      const btns = document.querySelectorAll(`.elig-q:nth-child(${q}) .elig-btn`);
+      btns.forEach(b => { if (b.textContent.toLowerCase() === ans) b.classList.add('active'); });
+    });
+    updateVerdict();
+  }
+
+  // Mission selection
+  const savedMission = LS.get('selected_mission');
+  if (savedMission) {
+    document.querySelectorAll('.mission-card[onclick]').forEach(c => {
+      if (c.getAttribute('onclick').includes(savedMission)) c.classList.add('selected');
+    });
+  }
+
+  // Sign-off badges
+  document.querySelectorAll('.signoff-badge').forEach(b => {
+    const role = b.dataset.role;
+    const groupId = b.closest('.signoff-row').id;
+    if (role && groupId && LS.get('signoff_' + groupId + '_' + role, false)) {
+      b.classList.add('signed');
+    }
+  });
+
+  updateProgressStats();
+}
+
+document.addEventListener('DOMContentLoaded', restoreState);
+
+// ═══════════════════════════════════════════
+// V4 — GOOGLE AUTH + SHEETS SYNC + ADMIN
+// ═══════════════════════════════════════════
+
+const CONFIG = {
+  // ── Supabase backend (replaces Google Sheets / Apps Script) ──
+  // Get these values from Supabase dashboard → Settings → API
+  SUPABASE_URL:      'https://qzngcnudzgtdzwfqajcu.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6bmdjbnVkemd0ZHp3ZnFhamN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MTc2MTYsImV4cCI6MjA5MzM5MzYxNn0.7WnoodCTwrCpif4a-Dl59U1HmqpGn5JgMbHOCiXJXCw',
+  POLL_INTERVAL_MS:  30000,
+};
+
+// ── Initialize Supabase client (loaded via CDN script tag) ──
+const sb = (typeof supabase !== 'undefined' && CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL')
+  ? supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    })
+  : null;
+
+// ── Display name from email when no Google profile name available ──
+function nameFromEmail(email) {
+  const local = email.split('@')[0]
+    .replace(/[\._\-]/g, ' ')
+    .replace(/\d{3,}/g, '')
+    .trim();
+  return local.split(' ').filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ') || email;
+}
+
+// ══════════════════════════════════════════════════════════════
+// AUTH FLOW (Supabase Auth + Google OAuth provider)
+// ══════════════════════════════════════════════════════════════
+let user = null;
+let userRole = 'observer';
+let syncInterval = null;
+let realtimeChan = null;
+
+window.addEventListener('load', async () => {
+  // No backend configured yet — show setup notice in auth gate
+  if (!sb) {
+    const subEl = document.querySelector('.auth-sub');
+    if (subEl) subEl.innerHTML = '<strong style="color:var(--h-yellow,#F0B400);">Backend not yet configured.</strong><br>Open this file and paste your Supabase project URL and anon key into the CONFIG block. See setup guide for details.';
+    const signinEl = document.getElementById('authSignInDiv');
+    if (signinEl) signinEl.innerHTML = '<button onclick="alert(\'Configure CONFIG block first — see setup guide\')" style="padding:14px 28px;background:rgba(240,180,0,0.12);border:1px solid rgba(240,180,0,0.3);color:#F0B400;border-radius:8px;cursor:pointer;font-weight:600;">Configure Backend First</button>';
+    return;
+  }
+
+  // Check existing session (handles OAuth redirect callback automatically)
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    await onAuthSuccess(session);
+  } else {
+    renderSignInButton();
+  }
+
+  // Listen for future auth changes (sign-in, sign-out, token refresh)
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session)  await onAuthSuccess(session);
+    if (event === 'SIGNED_OUT')            location.reload();
+  });
+});
+
+function renderSignInButton() {
+  const el = document.getElementById('authSignInDiv');
+  if (!el) return;
+  el.innerHTML = `
+    <button onclick="signInWithGoogle()" style="
+      display:inline-flex;align-items:center;gap:10px;
+      padding:12px 24px;background:#fff;color:#1C2130;
+      border:1px solid rgba(28,33,48,0.15);border-radius:8px;
+      cursor:pointer;font-weight:600;font-size:14px;font-family:inherit;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);transition:all .15s;
+    ">
+      <svg width="18" height="18" viewBox="0 0 18 18">
+        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.49h4.84a4.14 4.14 0 0 1-1.79 2.71v2.26h2.9c1.7-1.56 2.69-3.87 2.69-6.62z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.18l-2.9-2.26c-.8.54-1.83.86-3.06.86-2.34 0-4.32-1.58-5.04-3.71H.96v2.33A9 9 0 0 0 9 18z"/>
+        <path fill="#FBBC05" d="M3.96 10.71A5.4 5.4 0 0 1 3.66 9c0-.6.1-1.18.3-1.71V4.96H.96A8.99 8.99 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3-2.33z"/>
+        <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.34l2.58-2.58A8.99 8.99 0 0 0 9 0 9 9 0 0 0 .96 4.96l3 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
+      </svg>
+      Sign in with Google
+    </button>`;
+}
+
+async function signInWithGoogle() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href.split('#')[0].split('?')[0] }
+  });
+  if (error) console.error('Sign-in error:', error);
+}
+
+async function onAuthSuccess(session) {
+  const email = session.user.email.toLowerCase();
+  const profile = session.user.user_metadata || {};
+
+  // Look up user in our authorized users table
+  const { data: row, error } = await sb
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .maybeSingle();
+
+  if (error) { console.error('User lookup failed:', error); }
+  if (!row) { showAccessDenied(email); await sb.auth.signOut(); return; }
+  if (row.status !== 'active') { showAccessDenied(email); await sb.auth.signOut(); return; }
+
+  // Update last_active and merge profile data (picture, display name)
+  const displayName = row.name || profile.full_name || profile.name || nameFromEmail(email);
+  await sb.from('users').update({
+    last_active: new Date().toISOString(),
+    name: displayName,
+    picture_url: row.picture_url || profile.avatar_url || profile.picture || null,
+  }).eq('email', email);
+
+  user = {
+    email,
+    name:          displayName,
+    picture:       profile.avatar_url || profile.picture || row.picture_url || null,
+    role:          row.role,
+    isSuperAdmin:  row.is_super_admin,
+  };
+  userRole = row.role;
+
+  proceedToDashboard();
+  startSync();
+  await logActivity('signed_in');
+}
+
+function showAccessDenied(email) {
+  document.getElementById('authStatus').textContent = '';
+  document.getElementById('authSignInDiv').style.display = 'none';
+  const denied = document.getElementById('authDenied');
+  if (denied) {
+    denied.style.display = 'block';
+    denied.innerHTML = '<strong>Access Denied</strong>Your email (<code>' + email +
+      '</code>) is not on the authorized user list. Contact a super admin to request access.';
+  }
+}
+
+function proceedToDashboard() {
+  const _gate = document.getElementById('authGate');
+  if (_gate) { _gate.classList.add('hidden'); _gate.style.display = 'none'; }
+
+  // Populate header
+  const ub = document.getElementById('userBar');
+  if (ub && user) {
+    const ua = document.getElementById('userAvatar');
+    if (user.picture) { ua.style.backgroundImage = 'url(' + user.picture + ')'; ua.textContent = ''; }
+    else              { ua.textContent = (user.name || user.email)[0].toUpperCase(); }
+    document.getElementById('userName').textContent  = user.name || user.email.split('@')[0];
+    document.getElementById('userEmailDisplay').textContent = user.email;
+    if (user.isSuperAdmin) document.getElementById('userBadge').style.display = 'inline-flex';
+    if (user.isSuperAdmin) document.getElementById('adminPanelBtn').style.display = 'inline-flex';
+  }
+
+  // Set role bar
+  if (typeof setRole === 'function') setRole(userRole);
+  if (typeof updateSessionInfo === 'function') updateSessionInfo();
+
+  // Load shared state from Supabase into localStorage cache
+  pullSharedState();
+}
+
+async function signOut() {
+  await logActivity('signed_out');
+  await sb.auth.signOut();
+}
+
+// ══════════════════════════════════════════════════════════════
+// SYNC: SHARED STATE TO/FROM SUPABASE
+// ══════════════════════════════════════════════════════════════
+const SHARED_STATE_KEYS = [
+  'task_completions', 'sign_offs', 'eligibility_answers',
+  'document_owners', 'task_owners',
+];
+
+async function pullSharedState() {
+  if (!sb || !user) return;
+  try {
+    const { data, error } = await sb.from('state').select('key, value').eq('user_email', user.email);
+    if (error) { console.error('Pull state failed:', error); return; }
+    if (data) data.forEach(r => { if (SHARED_STATE_KEYS.includes(r.key)) LS.set(r.key, r.value); });
+    if (typeof renderAll === 'function') renderAll();
+    setSyncStatus('live');
+  } catch (e) { console.error(e); setSyncStatus('error'); }
+}
+
+async function pushStateKey(key) {
+  if (!sb || !user || !SHARED_STATE_KEYS.includes(key)) return;
+  setSyncStatus('saving');
+  try {
+    const value = LS.get(key, null);
+    const { error } = await sb.from('state').upsert({
+      user_email: user.email, key, value, updated_at: new Date().toISOString()
+    }, { onConflict: 'user_email,key' });
+    if (error) throw error;
+    setSyncStatus('live');
+  } catch (e) { console.error('Push failed:', e); setSyncStatus('error'); }
+}
+
+function startSync() {
+  if (!sb) return;
+
+  // Periodic pull (cheap insurance)
+  syncInterval = setInterval(pullSharedState, CONFIG.POLL_INTERVAL_MS);
+
+  // Realtime subscription — push updates to all connected clients instantly
+  realtimeChan = sb.channel('mmf-state')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+      if (typeof loadAdminUsers === 'function') loadAdminUsers();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'state',
+                              filter: `user_email=eq.${user.email}` }, payload => {
+      if (payload.new && SHARED_STATE_KEYS.includes(payload.new.key)) {
+        LS.set(payload.new.key, payload.new.value);
+        if (typeof renderAll === 'function') renderAll();
+      }
+    })
+    .subscribe();
+}
+
+function setSyncStatus(state) {
+  const dot   = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  const time  = document.getElementById('syncLastTime');
+  if (dot)   { dot.className = 'sync-dot ' + state; }
+  if (label) { label.textContent = state === 'live' ? 'Live · Supabase'
+                                  : state === 'saving' ? 'Saving…'
+                                  : state === 'error' ? 'Sync error'
+                                  : 'Offline'; }
+  if (time && state === 'live') time.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+  const url = document.getElementById('syncUrlDisplay');
+  if (url) url.textContent = CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL'
+    ? CONFIG.SUPABASE_URL.replace('https://','').substring(0, 36) + '…'
+    : '(not configured)';
+}
+
+// Hook into LS.set to push shared keys automatically
+const _origSet = LS.set;
+LS.set = function(k, v) {
+  _origSet.call(LS, k, v);
+  if (SHARED_STATE_KEYS.includes(k)) pushStateKey(k);
+};
+
+// ══════════════════════════════════════════════════════════════
+// ACTIVITY LOG
+// ══════════════════════════════════════════════════════════════
+async function logActivity(action, details = {}) {
+  if (!sb || !user) return;
+  try {
+    await sb.from('activity_log').insert({
+      user_email: user.email, action, details
+    });
+  } catch (e) { console.error('Log activity failed:', e); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN PANEL — USER MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+async function loadAdminUsers() {
+  if (!sb) return;
+  const tbody = document.getElementById('userTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">Loading…</td></tr>';
+
+  const { data, error } = await sb.from('users').select('*').order('created_at', { ascending: true });
+  if (error) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--h-pink, #D42870);text-align:center;padding:20px;">Failed to load users: ' + error.message + '</td></tr>';
+    return;
+  }
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px;">No users yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(u => {
+    const lastActive = u.last_active ? new Date(u.last_active).toLocaleDateString() : '—';
+    const badge = u.is_super_admin
+      ? '<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(240,180,0,0.12);color:#F0B400;font-weight:700;letter-spacing:0.5px;">SUPER ADMIN</span>'
+      : '';
+    const roleLabel = (ROLES[u.role] || {label:u.role}).label;
+    return `<tr>
+      <td>${u.email}</td>
+      <td>${u.name || nameFromEmail(u.email)} ${badge}</td>
+      <td>${roleLabel}</td>
+      <td><span style="color:${u.status==='active'?'var(--h-teal,#00B0A2)':'var(--muted)'};font-weight:600;">${u.status}</span></td>
+      <td style="font-size:11px;color:var(--muted);">${lastActive}</td>
+      <td>${u.is_super_admin && u.email !== user.email
+        ? `<button onclick="deleteUser('${u.email}')" style="padding:3px 8px;background:rgba(212,40,112,0.1);border:1px solid rgba(212,40,112,0.3);color:#D42870;border-radius:4px;cursor:pointer;font-size:11px;">Remove</button>`
+        : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function addAdminUser() {
+  if (!sb) return;
+  const email = document.getElementById('addUserEmail').value.trim().toLowerCase();
+  const name  = document.getElementById('addUserName').value.trim();
+  const role  = document.getElementById('addUserRole').value;
+  const status = document.getElementById('addUserStatus');
+  if (!email || !email.includes('@')) {
+    status.innerHTML = '<span style="color:var(--h-pink,#D42870);">Please enter a valid email.</span>';
+    return;
+  }
+  status.innerHTML = '<span style="color:var(--muted);">Adding…</span>';
+  const { error } = await sb.from('users').insert({
+    email, name: name || nameFromEmail(email), role, is_super_admin: true, status: 'active'
+  });
+  if (error) {
+    status.innerHTML = '<span style="color:var(--h-pink,#D42870);">' + error.message + '</span>';
+    return;
+  }
+  status.innerHTML = '<span style="color:var(--h-teal,#00B0A2);">✓ User added.</span>';
+  document.getElementById('addUserEmail').value = '';
+  document.getElementById('addUserName').value = '';
+  await logActivity('user_added', { added_email: email, role });
+  loadAdminUsers();
+  setTimeout(() => { status.innerHTML = ''; }, 3000);
+}
+
+async function deleteUser(email) {
+  if (!sb) return;
+  if (!confirm('Remove access for ' + email + '?')) return;
+  const { error } = await sb.from('users').delete().eq('email', email);
+  if (error) { alert('Failed: ' + error.message); return; }
+  await logActivity('user_removed', { removed_email: email });
+  loadAdminUsers();
+}
+
+async function loadActivityLog() {
+  if (!sb) return;
+  const tbody = document.getElementById('logTableBody');
+  if (!tbody) return;
+  const { data, error } = await sb.from('activity_log')
+    .select('*').order('created_at', { ascending: false }).limit(50);
+  if (error || !data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:20px;">No activity yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(e => {
+    const dt = new Date(e.created_at).toLocaleString();
+    return `<tr>
+      <td>${e.user_email || '—'}</td>
+      <td>${e.action || '—'}</td>
+      <td style="font-size:11px;color:var(--muted);">${e.details ? JSON.stringify(e.details).substring(0,60) : '—'}</td>
+      <td style="font-size:11px;color:var(--muted);">${dt}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('adminModal').addEventListener('click',function(e){if(e.target===this)closeAdminPanel();});
+</script>
+
+</body>
+</html>
