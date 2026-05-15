@@ -1927,12 +1927,194 @@ body::after {
 ::-webkit-scrollbar-thumb{background:rgba(28,33,48,0.15);border-radius:10px}
 ::-webkit-scrollbar-thumb:hover{background:#F0B400}
 
+/* ════ PUBLIC LANDING PAGE ════ */
+#landingPage {
+  position: fixed; inset: 0; z-index: 9000; overflow-y: auto;
+  background:
+    radial-gradient(ellipse at 25% 12%, rgba(0,176,162,0.10), transparent 55%),
+    radial-gradient(ellipse at 82% 88%, rgba(156,24,120,0.12), transparent 55%),
+    linear-gradient(165deg, #070B17 0%, #0C1121 55%, #111827 100%);
+  color: #F4F1EC; font-family: 'DM Sans', sans-serif;
+}
+.lp-nav {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px;
+  background: rgba(7,11,23,0.82); backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.lp-nav-brand { display: flex; align-items: center; gap: 9px; font-family: 'Bebas Neue', sans-serif; font-size: 19px; letter-spacing: 2px; }
+.lp-nav-org { font-size: 11px; letter-spacing: 3px; color: var(--muted); }
+.lp-authbtn {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  padding: 9px 18px; border-radius: 8px; cursor: pointer;
+  background: linear-gradient(135deg, rgba(0,176,162,0.18), rgba(27,142,212,0.14));
+  border: 1px solid rgba(0,176,162,0.4); color: #00B0A2; transition: all .15s;
+}
+.lp-authbtn:hover { background: rgba(0,176,162,0.3); color: #fff; }
+.lp-hero { max-width: 760px; margin: 0 auto; padding: 60px 28px 36px; text-align: center; }
+.lp-shield { filter: drop-shadow(0 0 16px rgba(0,176,162,0.22)); margin-bottom: 16px; }
+.lp-logo { font-family: 'Bebas Neue', sans-serif; font-size: 46px; letter-spacing: 2px; line-height: 1; }
+.lp-logo .m { color: var(--pink); } .lp-logo .pact { color: var(--cyan); }
+.lp-org { font-size: 13px; letter-spacing: 7px; color: var(--green1); font-weight: 700; margin-top: 6px; }
+.lp-loc { font-size: 10px; letter-spacing: 4px; color: var(--muted); margin-top: 8px; }
+.lp-mission { font-family: 'Cormorant Garamond', serif; font-size: 25px; line-height: 1.5; font-style: italic; color: #F4F1EC; margin-top: 30px; }
+.lp-mission em { color: var(--green1); }
+.lp-section { max-width: 1000px; margin: 0 auto; padding: 30px 28px; }
+.lp-section-eyebrow { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 700; text-align: center; }
+.lp-section-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; font-style: italic; text-align: center; margin: 6px 0 26px; color: #fff; }
+.lp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.lp-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 22px; }
+.lp-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 2px; color: var(--green1); }
+.lp-card-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: #fff; margin: 6px 0 8px; }
+.lp-card p { font-size: 11.5px; line-height: 1.6; color: var(--muted); }
+.lp-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.lp-pillar { padding: 18px 16px; border-radius: 12px; background: rgba(255,255,255,0.03); border-left: 3px solid var(--green1); }
+.lp-pillar:nth-child(2) { border-left-color: var(--purple1); }
+.lp-pillar:nth-child(3) { border-left-color: var(--cyan); }
+.lp-pillar:nth-child(4) { border-left-color: var(--pink); }
+.lp-pillar-name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+.lp-pillar p { font-size: 10.5px; line-height: 1.5; color: var(--muted); }
+.lp-footer { border-top: 1px solid rgba(255,255,255,0.06); margin-top: 26px; padding: 32px 28px 48px; text-align: center; }
+.lp-footer-mark { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 4px; color: var(--muted); }
+.lp-disclaimer {
+  max-width: 640px; margin: 14px auto 0; font-size: 11px; line-height: 1.7;
+  color: rgba(244,241,236,0.6);
+  background: rgba(240,180,0,0.06); border: 1px solid rgba(240,180,0,0.16);
+  border-radius: 10px; padding: 14px 20px;
+}
+.lp-footer-meta { font-size: 10px; letter-spacing: 2px; color: rgba(244,241,236,0.32); margin-top: 14px; }
+.auth-back { display: inline-block; margin-top: 22px; font-size: 11px; color: var(--muted); text-decoration: none; }
+.auth-back:hover { color: var(--green1); }
+@media (max-width: 760px) {
+  .lp-grid { grid-template-columns: 1fr; }
+  .lp-pillars { grid-template-columns: 1fr 1fr; }
+  .lp-mission { font-size: 21px; }
+  .lp-hero { padding-top: 44px; }
+  .lp-section-title { font-size: 25px; }
+}
+@media (max-width: 480px) {
+  .lp-pillars { grid-template-columns: 1fr; }
+  .lp-nav { padding: 12px 16px; }
+  .lp-logo { font-size: 38px; }
+}
+
 </style>
 </head>
 <body>
 
+<!-- ══ PUBLIC LANDING PAGE ══ -->
+<div id="landingPage">
+  <nav class="lp-nav">
+    <div class="lp-nav-brand">
+      <span><span style="color:var(--pink);">M</span><span style="color:var(--cyan);">PACT</span></span>
+      <span class="lp-nav-org">Mission Foundation</span>
+    </div>
+    <button class="lp-authbtn" onclick="showAuthGate()">Authorized Users &rarr;</button>
+  </nav>
+
+  <header class="lp-hero">
+    <svg class="lp-shield" width="76" height="96" viewBox="0 0 220 280" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="lp-s" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#00B0A2"/><stop offset="45%" stop-color="#9C1878"/><stop offset="100%" stop-color="#D42870"/>
+        </linearGradient>
+        <linearGradient id="lp-f" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00B0A2" stop-opacity="0.09"/><stop offset="100%" stop-color="#0E0C0A" stop-opacity="0.32"/>
+        </linearGradient>
+        <linearGradient id="lp-l" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#1B8ED4"/><stop offset="50%" stop-color="#9C1878"/><stop offset="100%" stop-color="#F0B400"/>
+        </linearGradient>
+        <clipPath id="lp-c"><path d="M 16,16 L 204,16 L 204,156 Q 204,226 110,268 Q 16,226 16,156 Z"/></clipPath>
+      </defs>
+      <path d="M 16,16 L 204,16 L 204,156 Q 204,226 110,268 Q 16,226 16,156 Z" fill="url(#lp-f)" stroke="url(#lp-s)" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M 24,24 L 196,24 L 196,154 Q 196,218 110,258 Q 24,218 24,154 Z" fill="none" stroke="url(#lp-s)" stroke-width="0.7" stroke-linejoin="round" opacity="0.35"/>
+      <g clip-path="url(#lp-c)">
+        <g transform="translate(110,155) skewX(-8) translate(-110,-155)">
+          <rect x="37" y="70" width="24" height="130" rx="4" fill="#1B8ED4" opacity="0.88"/>
+          <rect x="66" y="145" width="24" height="55" rx="4" fill="#00B0A2" opacity="0.72"/>
+          <rect x="95" y="105" width="24" height="95" rx="4" fill="#9C1878" opacity="0.88"/>
+          <rect x="124" y="145" width="24" height="55" rx="4" fill="#D42870" opacity="0.72"/>
+          <rect x="153" y="70" width="24" height="130" rx="4" fill="#F0B400" opacity="0.88"/>
+          <polyline points="49,70 78,145 107,105 136,145 165,70" stroke="url(#lp-l)" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+          <circle cx="49" cy="70" r="4.5" fill="#1B8ED4"/><circle cx="107" cy="105" r="3.5" fill="#9C1878"/><circle cx="165" cy="70" r="4.5" fill="#F0B400"/>
+        </g>
+      </g>
+      <circle cx="110" cy="16" r="5" fill="#00B0A2"/><circle cx="110" cy="268" r="5" fill="#D42870"/>
+    </svg>
+    <div class="lp-logo"><span class="m">M</span><span class="pact">PACT</span></div>
+    <div class="lp-org">MISSION FOUNDATION</div>
+    <div class="lp-loc">CHARLOTTE · NORTH CAROLINA</div>
+    <p class="lp-mission">MPact Mission Foundation is a <em>charitable finance platform</em> that provides market-based solutions and financial tools of dignity to help hardworking Americans and their communities achieve <em>the American Dream</em>.</p>
+  </header>
+
+  <section class="lp-section">
+    <div class="lp-section-eyebrow">What We Do</div>
+    <h2 class="lp-section-title">Six Operating Activities</h2>
+    <div class="lp-grid">
+      <div class="lp-card">
+        <div class="lp-card-num">ACTIVITY 01</div>
+        <div class="lp-card-name">Non-Profit Issuer</div>
+        <p>Issues charitable financial instruments — Community Impact Notes, Program Notes, and Charitable Bonds — to channel capital into the four pillars.</p>
+      </div>
+      <div class="lp-card">
+        <div class="lp-card-num">ACTIVITY 02</div>
+        <div class="lp-card-name">Conduit Issuer</div>
+        <p>Issues qualified 501(c)(3) bonds under IRC §145 on behalf of qualified charitable borrowers and developers.</p>
+      </div>
+      <div class="lp-card">
+        <div class="lp-card-num">ACTIVITY 03</div>
+        <div class="lp-card-name">PHIG Sponsor</div>
+        <p>Stewards Philanthropic Investment Grants — donor capital is invested for impact and recycled for lasting effect.</p>
+      </div>
+      <div class="lp-card">
+        <div class="lp-card-num">ACTIVITY 04</div>
+        <div class="lp-card-name">Fiscal Sponsor</div>
+        <p>Provides Model A and Model C fiscal sponsorship to mission-aligned charitable projects and initiatives.</p>
+      </div>
+      <div class="lp-card">
+        <div class="lp-card-num">ACTIVITY 05</div>
+        <div class="lp-card-name">Asset &amp; Investment Management</div>
+        <p>Nonprofit asset and investment management for affordable multifamily housing portfolios and impact funds.</p>
+      </div>
+      <div class="lp-card">
+        <div class="lp-card-num">ACTIVITY 06</div>
+        <div class="lp-card-name">Housing Ownership &amp; Recovery</div>
+        <p>Charitable fund strategies for homeownership access and post-disaster community recovery.</p>
+      </div>
+    </div>
+
+    <div class="lp-section-eyebrow" style="margin-top:46px;">Where Capital Is Deployed</div>
+    <h2 class="lp-section-title">Four Thematic Pillars</h2>
+    <div class="lp-pillars">
+      <div class="lp-pillar">
+        <div class="lp-pillar-name">Housing Stability</div>
+        <p>Affordable preservation, multifamily supply, and community land trusts.</p>
+      </div>
+      <div class="lp-pillar">
+        <div class="lp-pillar-name">Homeownership</div>
+        <p>Closing the affordability gap and expanding first-time homebuyer access.</p>
+      </div>
+      <div class="lp-pillar">
+        <div class="lp-pillar-name">Small Business Ownership</div>
+        <p>Working capital and lending that build local economic power.</p>
+      </div>
+      <div class="lp-pillar">
+        <div class="lp-pillar-name">Generational Wealth-Building</div>
+        <p>Financial literacy, credit, and asset-building for lasting prosperity.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="lp-footer">
+    <div class="lp-footer-mark">MPACT MISSION FOUNDATION</div>
+    <p class="lp-disclaimer">MPact Mission Foundation is currently in the process of filing for 501(c)(3) tax-exempt status with the Internal Revenue Service. Recognition as a tax-exempt organization is pending and has not yet been granted.</p>
+    <p class="lp-footer-meta">CHARLOTTE, NORTH CAROLINA · A CHARITABLE FINANCE PLATFORM</p>
+  </footer>
+</div>
+
 <!-- ══ AUTH GATE ══ -->
-<div id="authGate">
+<div id="authGate" class="hidden">
   <div class="auth-card">
     <div style="display:flex;justify-content:center;margin-bottom:16px;">
       <svg width="44" height="56" viewBox="0 0 220 280" fill="none" style="filter:drop-shadow(0 0 10px rgba(0,176,162,0.18));flex-shrink:0;" aria-hidden="true">
@@ -1988,6 +2170,7 @@ body::after {
       <strong>Access Denied</strong>
       Your email address is not on the authorized user list. Contact a super admin to request access.
     </div>
+    <a class="auth-back" href="#" onclick="showLanding();return false;">&larr; Back to MPact Mission Foundation</a>
   </div>
 </div>
 
@@ -4026,6 +4209,7 @@ window.addEventListener('load', async () => {
     if (subEl) subEl.innerHTML = '<strong style="color:var(--h-yellow,#F0B400);">Backend not yet configured.</strong><br>Open this file and paste your Supabase project URL and anon key into the CONFIG block. See setup guide for details.';
     const signinEl = document.getElementById('authSignInDiv');
     if (signinEl) signinEl.innerHTML = '<button onclick="alert(\'Configure CONFIG block first — see setup guide\')" style="padding:14px 28px;background:rgba(240,180,0,0.12);border:1px solid rgba(240,180,0,0.3);color:#F0B400;border-radius:8px;cursor:pointer;font-weight:600;">Configure Backend First</button>';
+    showAuthGate();
     return;
   }
 
@@ -4034,7 +4218,7 @@ window.addEventListener('load', async () => {
   if (session) {
     await onAuthSuccess(session);
   } else {
-    renderSignInButton();
+    showLanding();
   }
 
   // Listen for future auth changes (sign-in, sign-out, token refresh)
@@ -4043,6 +4227,22 @@ window.addEventListener('load', async () => {
     if (event === 'SIGNED_OUT')            location.reload();
   });
 });
+
+// ── Landing page <-> auth gate navigation ──
+function showLanding() {
+  const lp = document.getElementById('landingPage');
+  if (lp) lp.style.display = 'block';
+  const ag = document.getElementById('authGate');
+  if (ag) { ag.classList.add('hidden'); ag.style.display = 'none'; }
+}
+
+function showAuthGate() {
+  const lp = document.getElementById('landingPage');
+  if (lp) lp.style.display = 'none';
+  const ag = document.getElementById('authGate');
+  if (ag) { ag.classList.remove('hidden'); ag.style.display = 'flex'; }
+  if (typeof renderSignInButton === 'function') renderSignInButton();
+}
 
 function renderSignInButton() {
   const el = document.getElementById('authSignInDiv');
@@ -4124,6 +4324,8 @@ function showAccessDenied(email) {
 function proceedToDashboard() {
   const _gate = document.getElementById('authGate');
   if (_gate) { _gate.classList.add('hidden'); _gate.style.display = 'none'; }
+  const _lp = document.getElementById('landingPage');
+  if (_lp) _lp.style.display = 'none';
 
   // Populate header
   const ub = document.getElementById('userBar');
