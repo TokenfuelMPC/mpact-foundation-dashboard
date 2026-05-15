@@ -2013,11 +2013,11 @@ body::after {
     <div class="admin-tab-pane" id="admin-tab-sync">
       <div class="sync-bar">
         <div class="sync-dot live" id="modalSyncDot"></div>
-        <div class="sync-bar-text" id="modalSyncText">Connected to Google Sheets backend</div>
+        <div class="sync-bar-text" id="modalSyncText">Connected to Supabase backend</div>
         <button class="sync-refresh-btn" onclick="forceSyncAll()">↺ Force Sync</button>
       </div>
       <div style="font-size:10px;color:var(--muted);line-height:1.8;" id="syncDetails">
-        <div>Apps Script URL: <span style="color:var(--cyan);" id="syncUrlDisplay">—</span></div>
+        <div>Supabase URL: <span style="color:var(--cyan);" id="syncUrlDisplay">—</span></div>
         <div>Last full sync: <span id="syncLastTime">—</span></div>
         <div>Connected users (this session): <span id="syncConnectedCount">1</span></div>
         <div style="margin-top:12px;color:var(--green1);font-size:9px;letter-spacing:1px;font-weight:700;">SYNC SCOPE</div>
@@ -4312,7 +4312,63 @@ async function loadActivityLog() {
   }).join('');
 }
 
+// ══════════════════════════════════════════════════════════════
+// ADMIN PANEL — MODAL CONTROLS
+// ══════════════════════════════════════════════════════════════
+function openAdminPanel() {
+  const modal = document.getElementById('adminModal');
+  if (!modal) return;
+  modal.classList.add('open');
+  loadAdminUsers();
+  loadActivityLog();
+}
+
+function closeAdminPanel() {
+  const modal = document.getElementById('adminModal');
+  if (modal) modal.classList.remove('open');
+}
+
+function switchAdminTab(name, el) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.remove('active'));
+  const pane = document.getElementById('admin-tab-' + name);
+  if (pane) pane.classList.add('active');
+  if (name === 'users') loadAdminUsers();
+  if (name === 'log')   loadActivityLog();
+  if (name === 'sync')  refreshSyncStatus();
+}
+
+function refreshSyncStatus() {
+  const url = document.getElementById('syncUrlDisplay');
+  if (url) url.textContent = CONFIG.SUPABASE_URL;
+  const txt = document.getElementById('modalSyncText');
+  if (txt) txt.textContent = sb ? 'Connected to Supabase backend' : 'Backend not configured';
+  const dot = document.getElementById('modalSyncDot');
+  if (dot) dot.className = sb ? 'sync-dot live' : 'sync-dot error';
+}
+
+async function forceSyncAll() {
+  const dot = document.getElementById('modalSyncDot');
+  const txt = document.getElementById('modalSyncText');
+  if (dot) dot.className = 'sync-dot saving';
+  if (txt) txt.textContent = 'Syncing…';
+  try {
+    if (typeof pullSharedState === 'function') await pullSharedState();
+    if (dot) dot.className = 'sync-dot live';
+    if (txt) txt.textContent = 'Connected to Supabase backend';
+    const t = document.getElementById('syncLastTime');
+    if (t) t.textContent = new Date().toLocaleString();
+    if (typeof showToast === 'function') showToast('Sync complete');
+  } catch (e) {
+    if (dot) dot.className = 'sync-dot error';
+    if (txt) txt.textContent = 'Sync error';
+    console.error('forceSyncAll failed:', e);
+  }
+}
+
 document.getElementById('adminModal').addEventListener('click',function(e){if(e.target===this)closeAdminPanel();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAdminPanel();});
 </script>
 
 </body>
