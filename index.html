@@ -103,7 +103,10 @@ body::after {
   border-right: 1px solid rgba(255,255,255,0.05);
   display: flex; flex-direction: column;
   z-index: 300; overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.28s ease;
 }
+body.nav-open .sidebar { transform: translateX(0); }
 .sidebar-brand {
   padding: 28px 24px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -187,8 +190,9 @@ body::after {
 
 /* ══ MAIN ══ */
 .main {
-  margin-left: var(--sidebar-w); flex: 1;
+  margin-left: 0; flex: 1;
   padding: 0; min-height: 100vh; position: relative; z-index: 1;
+  transition: margin-left 0.28s ease;
 }
 .topbar {
   position: sticky; top: 0; z-index: 50;
@@ -1177,20 +1181,35 @@ body::after {
   .pj-step.future:nth-child(n+4) { display: none; }
 }
 
+/* ══ HAMBURGER NAV ══ */
+.nav-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 9px; cursor: pointer;
+  color: var(--white); font-size: 18px; line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+}
+.nav-toggle:hover { background: rgba(0,176,162,0.15); border-color: rgba(0,176,162,0.35); }
+#navBackdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(7,11,23,0.6); z-index: 290;
+}
+
+/* Desktop: an open sidebar pushes the content */
+@media (min-width: 881px) {
+  body.nav-open .main { margin-left: var(--sidebar-w); }
+  body.nav-open .role-bar { padding-left: calc(var(--sidebar-w) + 20px); }
+}
+
 /* ══ RESPONSIVE — tablet / landscape phone ══ */
 @media (max-width: 880px) {
-  body { display: block; }
-  .sidebar {
-    position: static; width: 100%; height: auto;
-    border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07);
-    overflow: visible;
-  }
-  .sidebar-footer { display: none; }
-  .main { margin-left: 0; }
-  .role-bar { position: static; padding: 8px 14px; height: auto; flex-wrap: wrap; }
+  body.nav-open #navBackdrop { display: block; }
   .topbar { height: auto; min-height: 60px; padding: 12px 18px; flex-wrap: wrap; gap: 4px 14px; }
   .topbar-left h1 { font-size: 22px; }
   .content { padding: 24px 16px 64px; }
+  .role-bar { padding: 8px 14px; height: auto; flex-wrap: wrap; }
   .sec-divider { margin: 38px 0 22px; }
   .stats-row, .modules-grid, .mission-grid, .roles-grid, .vault-grid, .quick-actions { grid-template-columns: repeat(2, 1fr); }
   [style*="grid-template-columns:repeat(3,1fr)"],
@@ -1618,7 +1637,7 @@ body::after {
 .role-bar {
   background: linear-gradient(90deg, rgba(12,17,33,0.98), rgba(12,17,33,0.95));
   border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding: 8px 20px 8px 260px;
+  padding: 8px 20px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -2314,6 +2333,7 @@ body::after {
 <div class="glow-br"></div>
 
 <!-- ══ SIDEBAR ══ -->
+<div id="navBackdrop" onclick="closeNav()"></div>
 <aside class="sidebar">
   <div class="sidebar-brand">
     <svg width="36" height="46" viewBox="0 0 220 280" fill="none" style="filter:drop-shadow(0 0 10px rgba(0,176,162,0.22));flex-shrink:0;" aria-hidden="true">
@@ -2421,9 +2441,12 @@ body::after {
 <!-- ══ MAIN ══ -->
 <main class="main">
   <div class="topbar">
-    <div class="topbar-left">
-      <h1>MPact Mission Foundation <span style="font-family:'Bebas Neue',sans-serif;font-size:14.5px;letter-spacing:2px;color:var(--green1);margin-left:8px;">· Formation Portal</span></h1>
-      <p>Charitable Finance Platform · Six Operating Programs · Capital Markets for Community Outcomes</p>
+    <div style="display:flex;align-items:center;gap:14px;min-width:0;">
+      <button class="nav-toggle" id="navToggle" onclick="toggleNav()" aria-label="Toggle navigation menu" title="Menu">☰</button>
+      <div class="topbar-left">
+        <h1>MPact Mission Foundation <span style="font-family:'Bebas Neue',sans-serif;font-size:14.5px;letter-spacing:2px;color:var(--green1);margin-left:8px;">· Formation Portal</span></h1>
+        <p>Charitable Finance Platform · Six Operating Programs · Capital Markets for Community Outcomes</p>
+      </div>
     </div>
     <div class="topbar-right">
       <span class="topbar-tag tag-nc">North Carolina</span>
@@ -4339,11 +4362,19 @@ function showAccessDenied(email) {
   }
 }
 
+// ── Hamburger navigation ──
+function toggleNav() { document.body.classList.toggle('nav-open'); }
+function closeNav()  { document.body.classList.remove('nav-open'); }
+
 function proceedToDashboard() {
   const _gate = document.getElementById('authGate');
   if (_gate) { _gate.classList.add('hidden'); _gate.style.display = 'none'; }
   const _lp = document.getElementById('landingPage');
   if (_lp) _lp.style.display = 'none';
+
+  // Sidebar: open by default on desktop, collapsed (hamburger) on mobile
+  if (window.innerWidth > 880) document.body.classList.add('nav-open');
+  else document.body.classList.remove('nav-open');
 
   // Populate header
   const ub = document.getElementById('userBar');
@@ -4806,6 +4837,9 @@ async function forceSyncAll() {
 }
 
 document.getElementById('adminModal').addEventListener('click',function(e){if(e.target===this)closeAdminPanel();});
+document.querySelectorAll('.sidebar .nav-item').forEach(function(a){
+  a.addEventListener('click', function(){ if (window.innerWidth <= 880) closeNav(); });
+});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAdminPanel();});
 </script>
 
