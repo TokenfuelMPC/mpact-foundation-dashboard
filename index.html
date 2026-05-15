@@ -2433,58 +2433,39 @@ body::after {
       <!-- Board roster -->
       <div class="board-list">
         <h3>Founding Board Roster</h3>
-        <p class="sub">NC requires minimum 3 directors · IRS recommends 5–7 unrelated members for credibility</p>
+        <p class="sub">NC requires minimum 3 directors · IRS recommends 5–7 unrelated members for credibility · Live from database</p>
 
-        <div class="board-row">
-          <div class="board-avatar av-g">FN</div>
-          <div>
-            <div class="board-name">Founder Name (TBD)</div>
-            <div class="board-role">President / Board Chair</div>
+        <div id="boardRoster">
+          <div class="board-row" style="grid-template-columns:1fr;">
+            <div style="color:var(--muted);font-size:12px;padding:8px 0;">Loading board roster…</div>
           </div>
-          <div class="board-term">Term: 3 yrs</div>
-          <div class="board-status bs-active">● Confirmed</div>
         </div>
 
-        <div class="board-row">
-          <div class="board-avatar av-p">CP</div>
-          <div>
-            <div class="board-name">Co-Founder / Partner (TBD)</div>
-            <div class="board-role">Treasurer · CFO Designate</div>
-          </div>
-          <div class="board-term">Term: 3 yrs</div>
-          <div class="board-status bs-active">● Confirmed</div>
-        </div>
+        <!-- Admin entry tool — super admins only -->
+        <div id="boardAdminTools" style="display:none;">
+          <button id="boardAddBtn" onclick="openBoardForm()" style="margin-top:18px;padding:8px 16px;background:rgba(0,176,162,0.12);border:1px solid rgba(0,176,162,0.3);color:var(--green1);border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit;">+ Add Board Member</button>
 
-        <div class="board-row">
-          <div class="board-avatar av-vacant">+</div>
-          <div>
-            <div class="board-name vacant">Open Seat — Secretary</div>
-            <div class="board-role">Records · Compliance · Required Officer</div>
+          <div id="boardForm" style="display:none;margin-top:14px;padding:18px;background:rgba(255,255,255,0.02);border:1px solid rgba(240,180,0,0.18);border-radius:12px;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:14px;" id="boardFormTitle">Add Board Member</div>
+            <input type="hidden" id="bmId">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div class="afu-field"><label>Name</label><input type="text" id="bmName" placeholder="Full name or 'Open Seat — Role'"></div>
+              <div class="afu-field"><label>Role / Title</label><input type="text" id="bmRole" placeholder="e.g. President / Board Chair"></div>
+              <div class="afu-field"><label>Seat Type</label><select id="bmSeatType"><option value="officer">Officer</option><option value="director">Director</option></select></div>
+              <div class="afu-field"><label>Term</label><input type="text" id="bmTerm" placeholder="e.g. 3 yrs / Required"></div>
+              <div class="afu-field"><label>Status</label><select id="bmStatus"><option value="confirmed">Confirmed</option><option value="pending">Pending</option><option value="vacant">Vacant / Open Seat</option></select></div>
+              <div class="afu-field"><label>Skill Area</label><select id="bmSkill"><option value="">— none —</option><option>Legal / Compliance</option><option>Community / Programs</option><option>Finance / Accounting</option><option>Fundraising / PR</option><option>General / Other</option></select></div>
+              <div class="afu-field"><label>Email (optional)</label><input type="email" id="bmEmail" placeholder="name@domain.com"></div>
+              <div class="afu-field"><label>Sort Order</label><input type="number" id="bmSort" placeholder="0" value="0"></div>
+            </div>
+            <div class="afu-field" style="margin-top:8px;"><label>Notes (optional)</label><input type="text" id="bmNotes" placeholder="Background, committee assignment, etc."></div>
+            <div style="display:flex;gap:8px;margin-top:14px;align-items:center;flex-wrap:wrap;">
+              <button onclick="saveBoardMember()" style="padding:8px 18px;background:var(--green1);border:none;color:#06241f;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;font-family:inherit;">Save Member</button>
+              <button onclick="closeBoardForm()" style="padding:8px 16px;background:transparent;border:1px solid rgba(255,255,255,0.12);color:var(--muted);border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit;">Cancel</button>
+              <span id="boardFormStatus" style="font-size:10px;color:var(--muted);"></span>
+            </div>
           </div>
-          <div class="board-term">Required</div>
-          <div class="board-status bs-vacant">VACANT</div>
         </div>
-
-        <div class="board-row">
-          <div class="board-avatar av-vacant">+</div>
-          <div>
-            <div class="board-name vacant">Open Seat — Director</div>
-            <div class="board-role">Programs · Community Liaison</div>
-          </div>
-          <div class="board-term">Recommended</div>
-          <div class="board-status bs-vacant">VACANT</div>
-        </div>
-
-        <div class="board-row">
-          <div class="board-avatar av-vacant">+</div>
-          <div>
-            <div class="board-name vacant">Open Seat — Director</div>
-            <div class="board-role">Legal Counsel · Compliance</div>
-          </div>
-          <div class="board-term">Recommended</div>
-          <div class="board-status bs-vacant">VACANT</div>
-        </div>
-
       </div>
 
       <!-- Board summary panel -->
@@ -2493,11 +2474,15 @@ body::after {
           <h4>Board Composition Status</h4>
           <div class="bs-stat">
             <span class="bs-stat-label">Confirmed Members</span>
-            <span class="bs-stat-val g">2</span>
+            <span class="bs-stat-val g" id="bsConfirmed">—</span>
+          </div>
+          <div class="bs-stat">
+            <span class="bs-stat-label">Pending</span>
+            <span class="bs-stat-val gold" id="bsPending">—</span>
           </div>
           <div class="bs-stat">
             <span class="bs-stat-label">Open Seats</span>
-            <span class="bs-stat-val k">3</span>
+            <span class="bs-stat-val k" id="bsOpen">—</span>
           </div>
           <div class="bs-stat">
             <span class="bs-stat-label">NC Minimum Required</span>
@@ -2509,7 +2494,7 @@ body::after {
           </div>
           <div class="bs-stat">
             <span class="bs-stat-label">IRS Compliance</span>
-            <span class="bs-stat-val k" style="font-size:13px;letter-spacing:0.5px;">⚠ INCOMPLETE</span>
+            <span class="bs-stat-val k" id="bsCompliance" style="font-size:13px;letter-spacing:0.5px;">—</span>
           </div>
         </div>
 
@@ -2521,21 +2506,8 @@ body::after {
 
         <div class="bs-card">
           <h4>Board Skill Gaps</h4>
-          <div class="bs-stat">
-            <span class="bs-stat-label">Legal / Compliance</span>
-            <span class="bs-stat-val k" style="font-size:14px;">Open</span>
-          </div>
-          <div class="bs-stat">
-            <span class="bs-stat-label">Community / Programs</span>
-            <span class="bs-stat-val k" style="font-size:14px;">Open</span>
-          </div>
-          <div class="bs-stat">
-            <span class="bs-stat-label">Finance / Accounting</span>
-            <span class="bs-stat-val g" style="font-size:14px;">Filled</span>
-          </div>
-          <div class="bs-stat">
-            <span class="bs-stat-label">Fundraising / PR</span>
-            <span class="bs-stat-val gold" style="font-size:14px;">Pending</span>
+          <div id="boardSkillGaps">
+            <div class="bs-stat"><span class="bs-stat-label" style="color:var(--muted);">Loading…</span></div>
           </div>
         </div>
       </div>
@@ -4123,6 +4095,9 @@ function proceedToDashboard() {
 
   // Load shared state from Supabase into localStorage cache
   pullSharedState();
+
+  // Load live Board Tracker roster from the database
+  loadBoardMembers();
 }
 
 async function signOut() {
@@ -4173,6 +4148,9 @@ function startSync() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
       if (typeof loadAdminUsers === 'function') loadAdminUsers();
     })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'board_members' }, () => {
+      if (typeof loadBoardMembers === 'function') loadBoardMembers();
+    })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'state',
                               filter: `user_email=eq.${user.email}` }, payload => {
       if (payload.new && SHARED_STATE_KEYS.includes(payload.new.key)) {
@@ -4217,6 +4195,197 @@ async function logActivity(action, details = {}) {
       user_email: user.email, action, details
     });
   } catch (e) { console.error('Log activity failed:', e); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// BOARD TRACKER — LIVE DATABASE
+// ══════════════════════════════════════════════════════════════
+let boardCache = [];
+
+function bmEsc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"]/g,
+    c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+}
+
+function boardInitials(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '+';
+  return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+}
+
+async function loadBoardMembers() {
+  if (!sb) return;
+  const tools = document.getElementById('boardAdminTools');
+  if (tools) tools.style.display = (user && user.isSuperAdmin) ? 'block' : 'none';
+
+  const roster = document.getElementById('boardRoster');
+  try {
+    const { data, error } = await sb.from('board_members')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: true });
+    if (error) {
+      if (roster) roster.innerHTML = '<div class="board-row" style="grid-template-columns:1fr;">'
+        + '<div style="color:var(--gold);font-size:11px;padding:8px 0;line-height:1.6;">'
+        + 'Board database not set up yet — a super admin must run '
+        + '<code>MPact_Board_Members_Table.sql</code> in the Supabase SQL Editor.</div></div>';
+      console.error('Board load failed:', error.message);
+      renderBoardSummary([]);
+      return;
+    }
+    boardCache = data || [];
+    renderBoardRoster(boardCache);
+    renderBoardSummary(boardCache);
+  } catch (e) { console.error('loadBoardMembers:', e); }
+}
+
+function renderBoardRoster(list) {
+  const roster = document.getElementById('boardRoster');
+  if (!roster) return;
+  const isAdmin = !!(user && user.isSuperAdmin);
+  if (!list.length) {
+    roster.innerHTML = '<div class="board-row" style="grid-template-columns:1fr;">'
+      + '<div style="color:var(--muted);font-size:12px;padding:8px 0;">No board members yet.'
+      + (isAdmin ? ' Use “+ Add Board Member” below to start the roster.' : '')
+      + '</div></div>';
+    return;
+  }
+  roster.innerHTML = list.map(m => {
+    const vacant  = m.status === 'vacant';
+    const pending = m.status === 'pending';
+    const avClass = vacant ? 'av-vacant' : (pending ? 'av-p' : 'av-g');
+    const avText  = vacant ? '+' : boardInitials(m.name);
+    const stClass = vacant ? 'bs-vacant' : (pending ? 'bs-pending' : 'bs-active');
+    const stText  = vacant ? 'VACANT' : (pending ? '◐ Pending' : '● Confirmed');
+    const nameCls = vacant ? 'board-name vacant' : 'board-name';
+    const actions = isAdmin
+      ? '<div style="display:flex;gap:4px;">'
+        + '<button onclick="openBoardForm(\'' + m.id + '\')" style="padding:3px 7px;background:rgba(27,142,212,0.12);border:1px solid rgba(27,142,212,0.3);color:var(--cyan);border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;">Edit</button>'
+        + '<button onclick="deleteBoardMember(\'' + m.id + '\')" title="Remove" style="padding:3px 7px;background:rgba(212,40,112,0.1);border:1px solid rgba(212,40,112,0.3);color:var(--pink);border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;">✕</button>'
+        + '</div>'
+      : '';
+    return '<div class="board-row">'
+      + '<div class="board-avatar ' + avClass + '">' + bmEsc(avText) + '</div>'
+      + '<div><div class="' + nameCls + '">' + bmEsc(m.name || 'Open Seat') + '</div>'
+      + '<div class="board-role">' + bmEsc(m.role || '') + '</div></div>'
+      + '<div class="board-term">' + bmEsc(m.term || '') + '</div>'
+      + '<div class="board-status ' + stClass + '">' + stText + '</div>'
+      + actions
+      + '</div>';
+  }).join('');
+}
+
+function renderBoardSummary(list) {
+  const confirmed = list.filter(m => m.status === 'confirmed').length;
+  const pending   = list.filter(m => m.status === 'pending').length;
+  const open      = list.filter(m => m.status === 'vacant').length;
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('bsConfirmed', confirmed);
+  set('bsPending', pending);
+  set('bsOpen', open);
+
+  const comp = document.getElementById('bsCompliance');
+  if (comp) {
+    const ok = confirmed >= 3;
+    comp.textContent = ok ? '✓ MEETS NC MIN' : '⚠ INCOMPLETE';
+    comp.className = 'bs-stat-val ' + (ok ? 'g' : 'k');
+    comp.style.fontSize = '13px';
+    comp.style.letterSpacing = '0.5px';
+  }
+
+  const gapsEl = document.getElementById('boardSkillGaps');
+  if (gapsEl) {
+    const cats = ['Legal / Compliance', 'Community / Programs', 'Finance / Accounting', 'Fundraising / PR'];
+    const filledSkills  = new Set(list.filter(m => m.status === 'confirmed' && m.skill_area).map(m => m.skill_area));
+    const pendingSkills = new Set(list.filter(m => m.status === 'pending'   && m.skill_area).map(m => m.skill_area));
+    gapsEl.innerHTML = cats.map(c => {
+      let label = 'Open', cls = 'k';
+      if (filledSkills.has(c))       { label = 'Filled';  cls = 'g'; }
+      else if (pendingSkills.has(c)) { label = 'Pending'; cls = 'gold'; }
+      return '<div class="bs-stat"><span class="bs-stat-label">' + c + '</span>'
+        + '<span class="bs-stat-val ' + cls + '" style="font-size:14px;">' + label + '</span></div>';
+    }).join('');
+  }
+}
+
+function openBoardForm(id) {
+  const form  = document.getElementById('boardForm');
+  const title = document.getElementById('boardFormTitle');
+  const st    = document.getElementById('boardFormStatus');
+  if (!form) return;
+  if (st) st.textContent = '';
+  const val = (i, v) => { const el = document.getElementById(i); if (el) el.value = v; };
+  if (id) {
+    const m = boardCache.find(x => x.id === id);
+    if (!m) return;
+    if (title) title.textContent = 'Edit Board Member';
+    val('bmId', m.id);
+    val('bmName', m.name || '');
+    val('bmRole', m.role || '');
+    val('bmSeatType', m.seat_type || 'director');
+    val('bmTerm', m.term || '');
+    val('bmStatus', m.status || 'confirmed');
+    val('bmSkill', m.skill_area || '');
+    val('bmEmail', m.email || '');
+    val('bmSort', m.sort_order != null ? m.sort_order : 0);
+    val('bmNotes', m.notes || '');
+  } else {
+    if (title) title.textContent = 'Add Board Member';
+    ['bmId','bmName','bmRole','bmTerm','bmEmail','bmNotes'].forEach(i => val(i, ''));
+    val('bmSeatType', 'director');
+    val('bmStatus', 'confirmed');
+    val('bmSkill', '');
+    val('bmSort', boardCache.length);
+  }
+  form.style.display = 'block';
+}
+
+function closeBoardForm() {
+  const form = document.getElementById('boardForm');
+  if (form) form.style.display = 'none';
+}
+
+async function saveBoardMember() {
+  if (!sb || !user) return;
+  const st = document.getElementById('boardFormStatus');
+  const setSt = (msg, color) => { if (st) { st.textContent = msg; st.style.color = color; } };
+  const id     = document.getElementById('bmId').value;
+  const name   = document.getElementById('bmName').value.trim();
+  const status = document.getElementById('bmStatus').value;
+  if (!name && status !== 'vacant') { setSt('Name is required.', 'var(--pink)'); return; }
+
+  const rec = {
+    name:       name || 'Open Seat',
+    role:       document.getElementById('bmRole').value.trim()  || null,
+    seat_type:  document.getElementById('bmSeatType').value,
+    term:       document.getElementById('bmTerm').value.trim()  || null,
+    status:     status,
+    skill_area: document.getElementById('bmSkill').value        || null,
+    email:      document.getElementById('bmEmail').value.trim() || null,
+    notes:      document.getElementById('bmNotes').value.trim() || null,
+    sort_order: parseInt(document.getElementById('bmSort').value, 10) || 0,
+    updated_at: new Date().toISOString(),
+    updated_by: user.email,
+  };
+  setSt('Saving…', 'var(--muted)');
+  let error;
+  if (id) ({ error } = await sb.from('board_members').update(rec).eq('id', id));
+  else    ({ error } = await sb.from('board_members').insert(rec));
+  if (error) { setSt(error.message, 'var(--pink)'); return; }
+  setSt('✓ Saved', 'var(--green1)');
+  await logActivity(id ? 'board_member_updated' : 'board_member_added', { name: rec.name, role: rec.role });
+  closeBoardForm();
+  loadBoardMembers();
+}
+
+async function deleteBoardMember(id) {
+  if (!sb) return;
+  const m = boardCache.find(x => x.id === id);
+  if (!confirm('Remove ' + (m ? m.name : 'this board member') + ' from the roster?')) return;
+  const { error } = await sb.from('board_members').delete().eq('id', id);
+  if (error) { alert('Failed to remove: ' + error.message); return; }
+  await logActivity('board_member_removed', { name: m ? m.name : id });
+  loadBoardMembers();
 }
 
 // ══════════════════════════════════════════════════════════════
