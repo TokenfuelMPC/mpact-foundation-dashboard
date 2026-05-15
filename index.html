@@ -1986,7 +1986,7 @@ body::after {
         <div class="afu-field">
           <label>Role</label>
           <select id="addUserRole">
-            <option value="founder">Founder / CEO</option>
+            <option value="founder">Founding Partner</option>
             <option value="legal">Legal Officer</option>
             <option value="treasurer">Treasurer</option>
             <option value="secretary">Secretary</option>
@@ -2030,7 +2030,7 @@ body::after {
 <div class="role-bar" id="roleBar">
   <span class="role-bar-label">Viewing as →</span>
   <div class="role-pills">
-    <button class="role-pill active" data-role="founder" onclick="setRole('founder')">🏛 Founder / CEO</button>
+    <button class="role-pill active" data-role="founder" onclick="setRole('founder')">🏛 Founding Partner</button>
     <button class="role-pill" data-role="legal" onclick="setRole('legal')">⚖️ Legal Officer</button>
     <button class="role-pill" data-role="treasurer" onclick="setRole('treasurer')">💰 Treasurer</button>
     <button class="role-pill" data-role="secretary" onclick="setRole('secretary')">📋 Secretary</button>
@@ -2053,7 +2053,7 @@ body::after {
     </div>
   </div>
   <div class="role-session" id="sessionInfo">
-    <strong id="sessionRole">Founder / CEO</strong><br>
+    <strong id="sessionRole">Founding Partner</strong><br>
     <span id="sessionTime"></span>
   </div>
 </div>
@@ -3352,7 +3352,7 @@ body::after {
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
 
       <div class="mission-card" style="cursor:default;border-color:rgba(0,176,162,0.25);background:linear-gradient(180deg,rgba(0,176,162,0.05),rgba(0,176,162,0.01));">
-        <div class="option-num" style="color:var(--green1)">🏛 Founder / CEO</div>
+        <div class="option-num" style="color:var(--green1)">🏛 Founding Partner</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--green1);margin-bottom:8px;">Board Chair / President</div>
         <div style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:12px;">Sets strategy, leads the board, and serves as principal executive. Signs filings and represents the Foundation externally.</div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;">
@@ -3595,7 +3595,7 @@ body::after {
 // ── Role definitions ──
 const ROLES = {
   founder: {
-    label: "Founder / CEO",
+    label: "Founding Partner",
     color: "var(--green1)",
     dot: "#06D6A0",
     actions: [
@@ -3692,7 +3692,7 @@ const ROLES = {
 };
 
 const OWNER_META = {
-  founder:   { label: "Founder / CEO",   color: "var(--green1)", dot: "#06D6A0" },
+  founder:   { label: "Founding Partner",   color: "var(--green1)", dot: "#06D6A0" },
   legal:     { label: "Legal Officer",   color: "var(--purple1)", dot: "#9C1878" },
   treasurer: { label: "Treasurer",       color: "var(--gold)",    dot: "#FFB700" },
   secretary: { label: "Secretary",       color: "var(--cyan)",    dot: "#00A4C8" },
