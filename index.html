@@ -2069,6 +2069,8 @@ body.nav-open .sidebar { transform: translateX(0); }
 .disc-qualify { background: var(--green1); border: none; color: #06241F; }
 .disc-archive { background: transparent; border: 1px solid rgba(28,33,48,0.2); color: var(--text-mid); }
 .disc-meta { font-size: 10.5px; color: var(--text-soft); white-space: nowrap; }
+.disc-source { display: inline-block; font-size: 10.5px; font-weight: 600; color: var(--cyan); text-decoration: none; margin-bottom: 10px; }
+.disc-source:hover { text-decoration: underline; }
 .dlog-row { padding: 10px 0; border-bottom: 1px solid var(--border-l); }
 .dlog-row:last-child { border-bottom: none; padding-bottom: 0; }
 
@@ -5049,35 +5051,35 @@ async function deleteGrant(id) {
 // GRANT DISCOVERY — curated catalog of aligned prospects
 // ══════════════════════════════════════════════════════════════
 const GRANT_CATALOG = [
-  { funder:'CDFI Fund (U.S. Treasury)', program:'CDFI Program — Financial Assistance', type:'Federal', focus:'Community Development Finance', amount:'$500K–$2M', desc:'Awards to certified CDFIs for lending capital, operations, and development services.' },
-  { funder:'CDFI Fund (U.S. Treasury)', program:'CDFI Bond Guarantee Program', type:'Federal', focus:'Community Development Finance', amount:'$10M+', desc:'Federal bond guarantees providing long-term, low-cost capital to CDFIs.' },
-  { funder:'U.S. SBA', program:'PRIME — Microenterprise Development', type:'Federal', focus:'Financial Inclusion', amount:'$50K–$250K', desc:'Grants for technical assistance and capacity building to microenterprise lenders.' },
-  { funder:'U.S. HUD', program:'Community Development Block Grant', type:'Federal', focus:'Inclusive Economy', amount:'Varies', desc:'Federal block grants for community and economic development activities.' },
-  { funder:'Federal Home Loan Bank of Atlanta', program:'Affordable Housing Program', type:'Federal', focus:'Affordable Housing Finance', amount:'$100K–$500K', desc:'Competitive grants subsidizing the development of affordable housing.' },
-  { funder:'MacArthur Foundation', program:'Catalytic Capital Consortium', type:'Foundation', focus:'Catalytic Capital', amount:'$100K–$500K', desc:'Catalytic capital grants and investments that unlock additional financing for impact.' },
-  { funder:'Ford Foundation', program:'Mission Investments (PRIs)', type:'Foundation', focus:'Impact Investing', amount:'$250K–$1M', desc:'Program-related investments into mission-aligned funds and intermediaries.' },
-  { funder:'The Rockefeller Foundation', program:'Innovative Finance Initiative', type:'Foundation', focus:'Innovative Finance', amount:'$150K–$500K', desc:'Support for new financing structures that mobilize private capital for impact.' },
-  { funder:'Kresge Foundation', program:'Social Investment Practice', type:'Foundation', focus:'Community Development Finance', amount:'$100K–$750K', desc:'Loans, guarantees, and grants for community development finance.' },
-  { funder:'W.K. Kellogg Foundation', program:'Mission-Driven Investments', type:'Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Investments advancing racial equity and economic mobility for families.' },
-  { funder:'The Heron Foundation', program:'Enterprise & Community Investing', type:'Foundation', focus:'Impact Investing', amount:'$50K–$300K', desc:'Full-endowment investing directed toward poverty reduction.' },
-  { funder:'Surdna Foundation', program:'Inclusive Economies', type:'Foundation', focus:'Inclusive Economy', amount:'$75K–$250K', desc:'Grants to build wealth and ownership in communities of color.' },
-  { funder:'Annie E. Casey Foundation', program:'Social Investment Fund', type:'Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Investments and grants for family economic stability and community development.' },
-  { funder:'Robert Wood Johnson Foundation', program:'Impact Investments', type:'Foundation', focus:'Impact Investing', amount:'$150K–$1M', desc:'Investments linking health, housing, and community finance.' },
-  { funder:'Mary Reynolds Babcock Foundation', program:'Building Economic Opportunity', type:'Foundation', focus:'Inclusive Economy', amount:'$50K–$150K', desc:'Grants helping families and communities move out of poverty across the U.S. South.' },
-  { funder:'JPMorgan Chase', program:'PRO Neighborhoods / Community Development', type:'Financial Institution', focus:'Community Development Finance', amount:'$250K–$1M', desc:'Capital and grants to CDFIs and community development partnerships.' },
-  { funder:'Wells Fargo Foundation', program:'Housing Access & Affordability', type:'Financial Institution', focus:'Affordable Housing Finance', amount:'$100K–$500K', desc:'Grants supporting affordable housing and homeownership access.' },
-  { funder:'Bank of America Charitable Foundation', program:'Economic Mobility', type:'Financial Institution', focus:'Inclusive Economy', amount:'$50K–$300K', desc:'Grants for workforce, housing stability, and community development finance.' },
-  { funder:'Citi Foundation', program:'Community Finance & Innovation', type:'Financial Institution', focus:'Financial Inclusion', amount:'$100K–$500K', desc:'Grants supporting financial inclusion and community development.' },
-  { funder:'Mastercard Center for Inclusive Growth', program:'Inclusive Growth Grants', type:'Financial Institution', focus:'Financial Inclusion', amount:'$100K–$500K', desc:'Grants and data tools advancing equitable economic growth.' },
-  { funder:'MetLife Foundation', program:'Financial Health', type:'Financial Institution', focus:'Financial Inclusion', amount:'$75K–$300K', desc:'Grants advancing financial health for low- and moderate-income people.' },
-  { funder:'Truist Foundation', program:'Economic Mobility', type:'Financial Institution', focus:'Inclusive Economy', amount:'$50K–$250K', desc:'Grants strengthening financial stability and small-business growth.' },
-  { funder:'Opportunity Finance Network', program:'Finance Justice Fund', type:'Financial Institution', focus:'Community Development Finance', amount:'$100K–$1M', desc:'Capital and grants channeled to CDFIs serving underinvested communities.' },
-  { funder:'Local Initiatives Support Corporation (LISC)', program:'Community Development Grants', type:'Community Foundation', focus:'Community Development Finance', amount:'$50K–$500K', desc:'Capital and grants for housing, small business, and community programs.' },
-  { funder:'Enterprise Community Partners', program:'Affordable Housing Capital', type:'Community Foundation', focus:'Affordable Housing Finance', amount:'$100K–$1M', desc:'Grants, loans, and equity for affordable housing development.' },
-  { funder:'Foundation For The Carolinas', program:'Community Grants', type:'Community Foundation', focus:'Inclusive Economy', amount:'$25K–$150K', desc:'Regional grants for economic opportunity across the Carolinas.' },
-  { funder:'Z. Smith Reynolds Foundation', program:'Inclusive Economy Grant', type:'Community Foundation', focus:'Inclusive Economy', amount:'$50K–$200K', desc:'North Carolina grants advancing an inclusive, equitable economy.' },
-  { funder:'Golden LEAF Foundation', program:'Economic Development Grants', type:'Community Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'North Carolina grants for economic development in rural and underserved areas.' },
-  { funder:'The Duke Endowment', program:'Community Development', type:'Community Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Grants across the Carolinas advancing community well-being.' },
+  { funder:'CDFI Fund (U.S. Treasury)', program:'CDFI Program — Financial Assistance', type:'Federal', focus:'Community Development Finance', amount:'$500K–$2M', desc:'Awards to certified CDFIs for lending capital, operations, and development services.', url:'https://www.cdfifund.gov/programs-training/programs/cdfi-program' },
+  { funder:'CDFI Fund (U.S. Treasury)', program:'CDFI Bond Guarantee Program', type:'Federal', focus:'Community Development Finance', amount:'$10M+', desc:'Federal bond guarantees providing long-term, low-cost capital to CDFIs.', url:'https://www.cdfifund.gov/programs-training/programs/bond-guarantee' },
+  { funder:'U.S. SBA', program:'PRIME — Microenterprise Development', type:'Federal', focus:'Financial Inclusion', amount:'$50K–$250K', desc:'Grants for technical assistance and capacity building to microenterprise lenders.', url:'https://www.sba.gov/funding-programs/grants' },
+  { funder:'U.S. HUD', program:'Community Development Block Grant', type:'Federal', focus:'Inclusive Economy', amount:'Varies', desc:'Federal block grants for community and economic development activities.', url:'https://www.hud.gov/program_offices/comm_planning/cdbg' },
+  { funder:'Federal Home Loan Bank of Atlanta', program:'Affordable Housing Program', type:'Federal', focus:'Affordable Housing Finance', amount:'$100K–$500K', desc:'Competitive grants subsidizing the development of affordable housing.', url:'https://corp.fhlbatl.com/products-and-solutions/affordable-housing-programs/' },
+  { funder:'MacArthur Foundation', program:'Catalytic Capital Consortium', type:'Foundation', focus:'Catalytic Capital', amount:'$100K–$500K', desc:'Catalytic capital grants and investments that unlock additional financing for impact.', url:'https://www.macfound.org/programs/c3/' },
+  { funder:'Ford Foundation', program:'Mission Investments (PRIs)', type:'Foundation', focus:'Impact Investing', amount:'$250K–$1M', desc:'Program-related investments into mission-aligned funds and intermediaries.', url:'https://www.fordfoundation.org/work/investing-in-individuals-and-institutions/mission-investments/' },
+  { funder:'The Rockefeller Foundation', program:'Innovative Finance Initiative', type:'Foundation', focus:'Innovative Finance', amount:'$150K–$500K', desc:'Support for new financing structures that mobilize private capital for impact.', url:'https://www.rockefellerfoundation.org/' },
+  { funder:'Kresge Foundation', program:'Social Investment Practice', type:'Foundation', focus:'Community Development Finance', amount:'$100K–$750K', desc:'Loans, guarantees, and grants for community development finance.', url:'https://kresge.org/programs/social-investments/' },
+  { funder:'W.K. Kellogg Foundation', program:'Mission-Driven Investments', type:'Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Investments advancing racial equity and economic mobility for families.', url:'https://www.wkkf.org/' },
+  { funder:'The Heron Foundation', program:'Enterprise & Community Investing', type:'Foundation', focus:'Impact Investing', amount:'$50K–$300K', desc:'Full-endowment investing directed toward poverty reduction.', url:'https://www.heron.org/' },
+  { funder:'Surdna Foundation', program:'Inclusive Economies', type:'Foundation', focus:'Inclusive Economy', amount:'$75K–$250K', desc:'Grants to build wealth and ownership in communities of color.', url:'https://surdna.org/programs/inclusive-economies/' },
+  { funder:'Annie E. Casey Foundation', program:'Social Investment Fund', type:'Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Investments and grants for family economic stability and community development.', url:'https://www.aecf.org/' },
+  { funder:'Robert Wood Johnson Foundation', program:'Impact Investments', type:'Foundation', focus:'Impact Investing', amount:'$150K–$1M', desc:'Investments linking health, housing, and community finance.', url:'https://www.rwjf.org/en/grants/grant-opportunities.html' },
+  { funder:'Mary Reynolds Babcock Foundation', program:'Building Economic Opportunity', type:'Foundation', focus:'Inclusive Economy', amount:'$50K–$150K', desc:'Grants helping families and communities move out of poverty across the U.S. South.', url:'https://mrbf.org/' },
+  { funder:'JPMorgan Chase', program:'PRO Neighborhoods / Community Development', type:'Financial Institution', focus:'Community Development Finance', amount:'$250K–$1M', desc:'Capital and grants to CDFIs and community development partnerships.', url:'https://www.jpmorganchase.com/impact' },
+  { funder:'Wells Fargo Foundation', program:'Housing Access & Affordability', type:'Financial Institution', focus:'Affordable Housing Finance', amount:'$100K–$500K', desc:'Grants supporting affordable housing and homeownership access.', url:'https://www.wellsfargo.com/about/corporate-responsibility/community-giving/' },
+  { funder:'Bank of America Charitable Foundation', program:'Economic Mobility', type:'Financial Institution', focus:'Inclusive Economy', amount:'$50K–$300K', desc:'Grants for workforce, housing stability, and community development finance.', url:'https://about.bankofamerica.com/en/making-an-impact/find-grants-sponsorships' },
+  { funder:'Citi Foundation', program:'Community Finance & Innovation', type:'Financial Institution', focus:'Financial Inclusion', amount:'$100K–$500K', desc:'Grants supporting financial inclusion and community development.', url:'https://www.citigroup.com/global/foundation' },
+  { funder:'Mastercard Center for Inclusive Growth', program:'Inclusive Growth Grants', type:'Financial Institution', focus:'Financial Inclusion', amount:'$100K–$500K', desc:'Grants and data tools advancing equitable economic growth.', url:'https://www.mastercardcenter.org/' },
+  { funder:'MetLife Foundation', program:'Financial Health', type:'Financial Institution', focus:'Financial Inclusion', amount:'$75K–$300K', desc:'Grants advancing financial health for low- and moderate-income people.', url:'https://www.metlife.com/metlife-foundation/' },
+  { funder:'Truist Foundation', program:'Economic Mobility', type:'Financial Institution', focus:'Inclusive Economy', amount:'$50K–$250K', desc:'Grants strengthening financial stability and small-business growth.', url:'https://www.truist.com/purpose/truist-foundation' },
+  { funder:'Opportunity Finance Network', program:'Finance Justice Fund', type:'Financial Institution', focus:'Community Development Finance', amount:'$100K–$1M', desc:'Capital and grants channeled to CDFIs serving underinvested communities.', url:'https://www.ofn.org/' },
+  { funder:'Local Initiatives Support Corporation (LISC)', program:'Community Development Grants', type:'Community Foundation', focus:'Community Development Finance', amount:'$50K–$500K', desc:'Capital and grants for housing, small business, and community programs.', url:'https://www.lisc.org/' },
+  { funder:'Enterprise Community Partners', program:'Affordable Housing Capital', type:'Community Foundation', focus:'Affordable Housing Finance', amount:'$100K–$1M', desc:'Grants, loans, and equity for affordable housing development.', url:'https://www.enterprisecommunity.org/' },
+  { funder:'Foundation For The Carolinas', program:'Community Grants', type:'Community Foundation', focus:'Inclusive Economy', amount:'$25K–$150K', desc:'Regional grants for economic opportunity across the Carolinas.', url:'https://www.fftc.org/' },
+  { funder:'Z. Smith Reynolds Foundation', program:'Inclusive Economy Grant', type:'Community Foundation', focus:'Inclusive Economy', amount:'$50K–$200K', desc:'North Carolina grants advancing an inclusive, equitable economy.', url:'https://www.zsr.org/' },
+  { funder:'Golden LEAF Foundation', program:'Economic Development Grants', type:'Community Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'North Carolina grants for economic development in rural and underserved areas.', url:'https://www.goldenleaf.org/' },
+  { funder:'The Duke Endowment', program:'Community Development', type:'Community Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Grants across the Carolinas advancing community well-being.', url:'https://www.dukeendowment.org/' },
 ];
 
 function discTypeClass(t) {
@@ -5119,10 +5121,12 @@ function renderDiscovery() {
       + '<div class="grant-funder">' + bmEsc(c.funder) + '</div>'
       + '<div class="grant-program">' + bmEsc(c.program) + '</div>'
       + '<div class="disc-desc">' + bmEsc(c.desc) + '</div>'
-      + '<div class="grant-card-row" style="margin-bottom:' + (isAdmin ? '10px' : '0') + ';">'
+      + '<div class="grant-card-row" style="margin-bottom:8px;">'
       + '<span class="grant-tag">' + bmEsc(c.focus) + '</span>'
       + '<span class="disc-meta">Est. ' + bmEsc(c.amount) + '</span>'
-      + '</div>' + actions + '</div>';
+      + '</div>'
+      + (c.url ? '<a class="disc-source" href="' + bmEsc(c.url) + '" target="_blank" rel="noopener">View funder &amp; grant page ↗</a>' : '')
+      + actions + '</div>';
   }).join('');
 }
 
@@ -5132,7 +5136,7 @@ async function qualifyDiscovery(idx) {
   if (!c) return;
   const { error } = await sb.from('grants').insert({
     funder: c.funder, program: c.program, focus_area: c.focus, amount: 0,
-    stage: 'research', notes: 'Qualified from Grant Discovery — ' + (c.desc || ''),
+    stage: 'research', notes: 'Qualified from Grant Discovery — ' + (c.desc || '') + (c.url ? ' · Source: ' + c.url : ''),
     updated_at: new Date().toISOString(), updated_by: user.email,
   });
   if (error) { alert('Qualify failed: ' + error.message); return; }
