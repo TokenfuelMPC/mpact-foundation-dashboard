@@ -1205,12 +1205,21 @@ body.nav-open .sidebar { transform: translateX(0); }
 
 /* ══ RESPONSIVE — tablet / landscape phone ══ */
 @media (max-width: 880px) {
+  html, body { overflow-x: hidden; }
   body.nav-open #navBackdrop { display: block; }
-  .topbar { height: auto; min-height: 60px; padding: 12px 18px; flex-wrap: wrap; gap: 4px 14px; }
+  /* Force the full content width — no dead space on the right */
+  .role-bar, .topbar, .progress-bar, .housing-row, .main, .content, .stats-row {
+    width: 100%; max-width: 100%; box-sizing: border-box;
+  }
+  .main { margin-left: 0; }
+  .topbar { height: auto; min-height: 60px; padding: 12px 16px; flex-wrap: wrap; gap: 4px 12px; }
   .topbar-left h1 { font-size: 22px; }
-  .content { padding: 24px 16px 64px; }
+  .content { padding: 20px 14px 60px; }
+  .housing-row { padding: 0 14px; }
   .role-bar { padding: 8px 14px; height: auto; flex-wrap: wrap; }
-  .sec-divider { margin: 38px 0 22px; }
+  /* Declutter the role bar on small screens — keep identity & admin only */
+  .role-bar-label, .role-pills, .role-session { display: none; }
+  .sec-divider { margin: 32px 0 20px; }
   .stats-row, .modules-grid, .mission-grid, .roles-grid, .vault-grid, .quick-actions { grid-template-columns: repeat(2, 1fr); }
   [style*="grid-template-columns:repeat(3,1fr)"],
   [style*="grid-template-columns:repeat(4,1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
