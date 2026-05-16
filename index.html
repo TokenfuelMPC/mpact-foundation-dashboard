@@ -2036,6 +2036,27 @@ body.nav-open .sidebar { transform: translateX(0); }
   .lp-logo { font-size: 38px; }
 }
 
+/* ════ GRANT PIPELINE ════ */
+.grant-col { background: var(--card-bg); border: 1px solid var(--border-l); border-radius: 12px; padding: 12px 12px 8px; box-shadow: var(--shadow-card); }
+.grant-col-head { display: flex; align-items: center; justify-content: space-between; padding: 2px 4px 10px; border-bottom: 1px solid var(--border-l); margin-bottom: 10px; }
+.grant-col-name { font-size: 11.5px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
+.grant-col-count { font-size: 11px; font-weight: 700; color: var(--text-soft); background: rgba(28,33,48,0.06); border-radius: 20px; padding: 1px 9px; }
+.grant-card { background: rgba(28,33,48,0.025); border: 1px solid var(--border-l); border-radius: 9px; padding: 11px 12px; margin-bottom: 8px; }
+.grant-card:last-child { margin-bottom: 0; }
+.grant-funder { font-size: 13px; font-weight: 700; color: var(--text-dark); line-height: 1.3; }
+.grant-program { font-size: 11.5px; color: var(--text-mid); margin-top: 2px; line-height: 1.4; }
+.grant-card-row { display: flex; align-items: center; justify-content: space-between; margin-top: 9px; gap: 8px; flex-wrap: wrap; }
+.grant-amount { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 0.5px; color: var(--green1); }
+.grant-deadline { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+.gd-overdue { background: rgba(212,40,112,0.13); color: var(--pink); }
+.gd-soon { background: rgba(240,180,0,0.16); color: #A87400; }
+.gd-ok { background: rgba(28,33,48,0.06); color: var(--text-soft); }
+.grant-tag { font-size: 10px; padding: 2px 7px; border-radius: 5px; background: rgba(27,142,212,0.1); color: var(--cyan); font-weight: 600; }
+.grant-card-actions { display: flex; gap: 4px; margin-top: 9px; }
+.grant-empty { font-size: 11.5px; color: var(--text-soft); padding: 8px 4px; font-style: italic; }
+.gfs-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-l); }
+.gfs-row:last-child { border-bottom: none; }
+
 </style>
 </head>
 <body>
@@ -2409,6 +2430,9 @@ body.nav-open .sidebar { transform: translateX(0); }
     </a>
     <a class="nav-item" href="#activity">
       <span class="nav-icon">📡</span> Activity Log
+    </a>
+    <a class="nav-item" href="#grants">
+      <span class="nav-icon">💰</span> Grant Pipeline
     </a>
   </div>
 
@@ -3380,6 +3404,77 @@ body.nav-open .sidebar { transform: translateX(0); }
         <div class="act-time">EARLIER</div>
       </div>
 
+    </div>
+
+    <!-- ══ GRANT PIPELINE ══ -->
+    <div class="sec-divider" id="grants">
+      <div class="sec-divider-line"></div>
+      <span class="sec-divider-icon">💰</span>
+      <span class="sec-divider-label">Grant Pipeline · Financial Innovation &amp; Impact Investment</span>
+      <div class="sec-divider-line"></div>
+    </div>
+
+    <div class="mission-hero" style="margin-bottom:14px;">
+      <div class="mission-eyebrow">Funding Operations · Impact Investment &amp; Financial Innovation Grants</div>
+      <h2>Grant Pipeline Manager</h2>
+      <p class="subtitle">Track grant prospects from research through reporting. Stage, deadline alerts, and outcomes update live from the database — every change is shared with the team instantly.</p>
+    </div>
+
+    <!-- Pipeline stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;">
+      <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:18px 20px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--cyan);line-height:1;" id="grStatActive">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px;font-weight:600;">Active Prospects</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:18px 20px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);line-height:1;" id="grStatPipeline">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px;font-weight:600;">Pipeline Value</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:18px 20px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--green1);line-height:1;" id="grStatAwarded">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px;font-weight:600;">Awarded</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:18px 20px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--pink);line-height:1;" id="grStatDeadlines">—</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px;font-weight:600;">Deadlines &le; 30 days</div>
+      </div>
+    </div>
+
+    <!-- Admin entry tool — super admins only -->
+    <div id="grantAdminTools" style="display:none;margin-bottom:14px;">
+      <button id="grantAddBtn" onclick="openGrantForm()" style="padding:8px 16px;background:rgba(0,176,162,0.12);border:1px solid rgba(0,176,162,0.3);color:var(--green1);border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit;">+ Add Grant Prospect</button>
+
+      <div id="grantForm" style="display:none;margin-top:14px;padding:18px;background:#FFFFFF;border:1px solid rgba(240,180,0,0.25);border-radius:12px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#B07E00;font-weight:700;margin-bottom:14px;" id="grantFormTitle">Add Grant Prospect</div>
+        <input type="hidden" id="gmId">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="afu-field"><label>Funder</label><input type="text" id="gmFunder" placeholder="e.g. Ford Foundation"></div>
+          <div class="afu-field"><label>Grant Program</label><input type="text" id="gmProgram" placeholder="e.g. Mission Investments (PRI)"></div>
+          <div class="afu-field"><label>Amount (USD)</label><input type="number" id="gmAmount" placeholder="250000"></div>
+          <div class="afu-field"><label>Stage</label><select id="gmStage"><option value="research">Research</option><option value="application">Application</option><option value="award">Award</option><option value="reporting">Reporting</option><option value="declined">Declined</option></select></div>
+          <div class="afu-field"><label>Deadline</label><input type="date" id="gmDeadline"></div>
+          <div class="afu-field"><label>Focus Area</label><select id="gmFocus"><option value="">— select —</option><option>Impact Investing</option><option>Catalytic Capital</option><option>Innovative Finance</option><option>Community Development Finance</option><option>Affordable Housing Finance</option><option>Inclusive Economy</option><option>Financial Inclusion</option></select></div>
+          <div class="afu-field"><label>Contact (optional)</label><input type="text" id="gmContact" placeholder="Program officer / email"></div>
+          <div class="afu-field"><label>Sort Order</label><input type="number" id="gmSort" placeholder="0" value="0"></div>
+        </div>
+        <div class="afu-field" style="margin-top:8px;"><label>Outcome / Notes (optional)</label><input type="text" id="gmNotes" placeholder="Status, decision, reporting notes"></div>
+        <div style="display:flex;gap:8px;margin-top:14px;align-items:center;flex-wrap:wrap;">
+          <button onclick="saveGrant()" style="padding:8px 18px;background:var(--green1);border:none;color:#06241f;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;font-family:inherit;">Save Grant</button>
+          <button onclick="closeGrantForm()" style="padding:8px 16px;background:transparent;border:1px solid rgba(28,33,48,0.18);color:var(--text-mid);border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit;">Cancel</button>
+          <span id="grantFormStatus" style="font-size:10px;color:var(--muted);"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline columns -->
+    <div id="grantPipeline" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;">
+      <div style="color:var(--muted);font-size:12px;padding:8px 4px;">Loading grant pipeline…</div>
+    </div>
+
+    <!-- Outcomes by funder -->
+    <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:20px 24px;margin-bottom:14px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--green1);font-weight:700;margin-bottom:12px;">Outcomes by Funder</div>
+      <div id="grantFunderSummary"></div>
     </div>
 
     <!-- ══ SUGGESTED FUTURE MODULES ══ -->
@@ -4398,6 +4493,9 @@ function proceedToDashboard() {
 
   // Load live Board Tracker roster from the database
   loadBoardMembers();
+
+  // Load live Grant Pipeline from the database
+  loadGrants();
 }
 
 async function signOut() {
@@ -4450,6 +4548,9 @@ function startSync() {
     })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'board_members' }, () => {
       if (typeof loadBoardMembers === 'function') loadBoardMembers();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'grants' }, () => {
+      if (typeof loadGrants === 'function') loadGrants();
     })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'state',
                               filter: `user_email=eq.${user.email}` }, payload => {
@@ -4686,6 +4787,209 @@ async function deleteBoardMember(id) {
   if (error) { alert('Failed to remove: ' + error.message); return; }
   await logActivity('board_member_removed', { name: m ? m.name : id });
   loadBoardMembers();
+}
+
+// ══════════════════════════════════════════════════════════════
+// GRANT PIPELINE — LIVE DATABASE
+// ══════════════════════════════════════════════════════════════
+let grantsCache = [];
+const GRANT_STAGES = [
+  { key: 'research',    label: 'Research',    color: '#1B8ED4' },
+  { key: 'application', label: 'Application', color: '#A87400' },
+  { key: 'award',       label: 'Award',       color: '#00A89A' },
+  { key: 'reporting',   label: 'Reporting',   color: '#9C1878' },
+];
+
+function grMoney(n) {
+  n = Number(n) || 0;
+  if (n >= 1000000) return '$' + (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1) + 'M';
+  if (n >= 1000)    return '$' + Math.round(n / 1000) + 'K';
+  return '$' + n;
+}
+
+function grDeadlineBadge(deadline) {
+  if (!deadline) return '';
+  const d = new Date(deadline + 'T00:00:00');
+  if (isNaN(d.getTime())) return '';
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const days = Math.round((d - today) / 86400000);
+  const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  let cls = 'gd-ok', txt = dateStr;
+  if (days < 0)        { cls = 'gd-overdue'; txt = 'Overdue · ' + dateStr; }
+  else if (days <= 14) { cls = 'gd-soon';    txt = days + 'd · ' + dateStr; }
+  else if (days <= 30) { cls = 'gd-soon';    txt = dateStr; }
+  return '<span class="grant-deadline ' + cls + '">' + txt + '</span>';
+}
+
+async function loadGrants() {
+  if (!sb) return;
+  const tools = document.getElementById('grantAdminTools');
+  if (tools) tools.style.display = (user && user.isSuperAdmin) ? 'block' : 'none';
+  const wrap = document.getElementById('grantPipeline');
+  try {
+    const { data, error } = await sb.from('grants')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('deadline', { ascending: true });
+    if (error) {
+      if (wrap) wrap.innerHTML = '<div style="grid-column:1/-1;color:var(--gold);font-size:12px;padding:10px;line-height:1.6;">'
+        + 'Grant database not set up yet — a super admin must run '
+        + '<code>MPact_Grants_Table.sql</code> in the Supabase SQL Editor.</div>';
+      console.error('Grants load failed:', error.message);
+      renderGrantStats([]);
+      return;
+    }
+    grantsCache = data || [];
+    renderGrantPipeline(grantsCache);
+    renderGrantStats(grantsCache);
+  } catch (e) { console.error('loadGrants:', e); }
+}
+
+function renderGrantPipeline(list) {
+  const wrap = document.getElementById('grantPipeline');
+  if (!wrap) return;
+  const isAdmin = !!(user && user.isSuperAdmin);
+  wrap.innerHTML = GRANT_STAGES.map(stage => {
+    const items = list.filter(g => g.stage === stage.key);
+    const cards = items.length ? items.map(g => {
+      const actions = isAdmin
+        ? '<div class="grant-card-actions">'
+          + '<button onclick="openGrantForm(\'' + g.id + '\')" style="padding:3px 8px;background:rgba(27,142,212,0.12);border:1px solid rgba(27,142,212,0.3);color:var(--cyan);border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;">Edit</button>'
+          + '<button onclick="deleteGrant(\'' + g.id + '\')" style="padding:3px 8px;background:rgba(212,40,112,0.1);border:1px solid rgba(212,40,112,0.3);color:var(--pink);border-radius:4px;cursor:pointer;font-size:10px;font-family:inherit;">✕</button>'
+          + '</div>'
+        : '';
+      return '<div class="grant-card">'
+        + '<div class="grant-funder">' + bmEsc(g.funder) + '</div>'
+        + '<div class="grant-program">' + bmEsc(g.program || '') + '</div>'
+        + '<div class="grant-card-row">'
+        + '<span class="grant-amount">' + grMoney(g.amount) + '</span>'
+        + grDeadlineBadge(g.deadline)
+        + '</div>'
+        + (g.focus_area ? '<div style="margin-top:8px;"><span class="grant-tag">' + bmEsc(g.focus_area) + '</span></div>' : '')
+        + actions
+        + '</div>';
+    }).join('') : '<div class="grant-empty">No grants in this stage.</div>';
+    return '<div class="grant-col">'
+      + '<div class="grant-col-head">'
+      + '<span class="grant-col-name" style="color:' + stage.color + ';">' + stage.label + '</span>'
+      + '<span class="grant-col-count">' + items.length + '</span>'
+      + '</div>' + cards + '</div>';
+  }).join('');
+}
+
+function renderGrantStats(list) {
+  const active = list.filter(g => g.stage !== 'declined');
+  const pipelineVal = list.filter(g => g.stage === 'research' || g.stage === 'application')
+    .reduce((s, g) => s + (Number(g.amount) || 0), 0);
+  const awardedVal = list.filter(g => g.stage === 'award' || g.stage === 'reporting')
+    .reduce((s, g) => s + (Number(g.amount) || 0), 0);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const dueSoon = active.filter(g => {
+    if (!g.deadline) return false;
+    const days = Math.round((new Date(g.deadline + 'T00:00:00') - today) / 86400000);
+    return days >= 0 && days <= 30;
+  }).length;
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('grStatActive', active.length);
+  set('grStatPipeline', grMoney(pipelineVal));
+  set('grStatAwarded', grMoney(awardedVal));
+  set('grStatDeadlines', dueSoon);
+
+  const el = document.getElementById('grantFunderSummary');
+  if (el) {
+    if (!list.length) { el.innerHTML = '<div class="grant-empty">No grant prospects yet.</div>'; return; }
+    const byFunder = {};
+    list.forEach(g => {
+      const f = g.funder || '—';
+      if (!byFunder[f]) byFunder[f] = { count: 0, requested: 0, awarded: 0 };
+      byFunder[f].count++;
+      byFunder[f].requested += (Number(g.amount) || 0);
+      if (g.stage === 'award' || g.stage === 'reporting') byFunder[f].awarded += (Number(g.amount) || 0);
+    });
+    el.innerHTML =
+      '<div class="gfs-row" style="font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--text-soft);font-weight:700;">'
+      + '<span style="flex:1;">Funder</span><span style="width:60px;text-align:right;">Grants</span>'
+      + '<span style="width:92px;text-align:right;">Requested</span><span style="width:92px;text-align:right;">Awarded</span></div>'
+      + Object.keys(byFunder).sort().map(f => {
+          const d = byFunder[f];
+          return '<div class="gfs-row">'
+            + '<span style="flex:1;font-size:12px;font-weight:600;color:var(--text-dark);">' + bmEsc(f) + '</span>'
+            + '<span style="width:60px;text-align:right;font-size:12px;color:var(--text-mid);">' + d.count + '</span>'
+            + '<span style="width:92px;text-align:right;font-size:12px;font-weight:700;color:var(--text-dark);">' + grMoney(d.requested) + '</span>'
+            + '<span style="width:92px;text-align:right;font-size:12px;font-weight:700;color:var(--green1);">' + grMoney(d.awarded) + '</span>'
+            + '</div>';
+        }).join('');
+  }
+}
+
+function openGrantForm(id) {
+  const form = document.getElementById('grantForm');
+  const title = document.getElementById('grantFormTitle');
+  const st = document.getElementById('grantFormStatus');
+  if (!form) return;
+  if (st) st.textContent = '';
+  const val = (i, v) => { const el = document.getElementById(i); if (el) el.value = v; };
+  if (id) {
+    const g = grantsCache.find(x => x.id === id);
+    if (!g) return;
+    if (title) title.textContent = 'Edit Grant Prospect';
+    val('gmId', g.id); val('gmFunder', g.funder || ''); val('gmProgram', g.program || '');
+    val('gmAmount', g.amount != null ? g.amount : ''); val('gmStage', g.stage || 'research');
+    val('gmDeadline', g.deadline || ''); val('gmFocus', g.focus_area || '');
+    val('gmContact', g.contact || ''); val('gmSort', g.sort_order != null ? g.sort_order : 0);
+    val('gmNotes', g.notes || g.outcome || '');
+  } else {
+    if (title) title.textContent = 'Add Grant Prospect';
+    ['gmId','gmFunder','gmProgram','gmAmount','gmDeadline','gmContact','gmNotes'].forEach(i => val(i, ''));
+    val('gmStage', 'research'); val('gmFocus', ''); val('gmSort', grantsCache.length);
+  }
+  form.style.display = 'block';
+}
+
+function closeGrantForm() {
+  const f = document.getElementById('grantForm');
+  if (f) f.style.display = 'none';
+}
+
+async function saveGrant() {
+  if (!sb || !user) return;
+  const st = document.getElementById('grantFormStatus');
+  const setSt = (m, c) => { if (st) { st.textContent = m; st.style.color = c; } };
+  const id = document.getElementById('gmId').value;
+  const funder = document.getElementById('gmFunder').value.trim();
+  if (!funder) { setSt('Funder is required.', 'var(--pink)'); return; }
+  const rec = {
+    funder:     funder,
+    program:    document.getElementById('gmProgram').value.trim() || null,
+    amount:     parseFloat(document.getElementById('gmAmount').value) || 0,
+    stage:      document.getElementById('gmStage').value,
+    deadline:   document.getElementById('gmDeadline').value || null,
+    focus_area: document.getElementById('gmFocus').value || null,
+    contact:    document.getElementById('gmContact').value.trim() || null,
+    notes:      document.getElementById('gmNotes').value.trim() || null,
+    sort_order: parseInt(document.getElementById('gmSort').value, 10) || 0,
+    updated_at: new Date().toISOString(),
+    updated_by: user.email,
+  };
+  setSt('Saving…', 'var(--muted)');
+  let error;
+  if (id) ({ error } = await sb.from('grants').update(rec).eq('id', id));
+  else    ({ error } = await sb.from('grants').insert(rec));
+  if (error) { setSt(error.message, 'var(--pink)'); return; }
+  setSt('✓ Saved', 'var(--green1)');
+  await logActivity(id ? 'grant_updated' : 'grant_added', { funder: rec.funder, stage: rec.stage });
+  closeGrantForm();
+  loadGrants();
+}
+
+async function deleteGrant(id) {
+  if (!sb) return;
+  const g = grantsCache.find(x => x.id === id);
+  if (!confirm('Remove ' + (g ? g.funder : 'this grant') + ' from the pipeline?')) return;
+  const { error } = await sb.from('grants').delete().eq('id', id);
+  if (error) { alert('Failed to remove: ' + error.message); return; }
+  await logActivity('grant_removed', { funder: g ? g.funder : id });
+  loadGrants();
 }
 
 // ══════════════════════════════════════════════════════════════
