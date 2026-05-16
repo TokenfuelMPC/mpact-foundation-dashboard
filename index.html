@@ -5027,14 +5027,24 @@ async function saveGrant() {
     updated_by: user.email,
   };
   setSt('Saving…', 'var(--muted)');
-  let error;
-  if (id) ({ error } = await sb.from('grants').update(rec).eq('id', id));
-  else    ({ error } = await sb.from('grants').insert(rec));
-  if (error) { setSt(error.message, 'var(--pink)'); return; }
-  setSt('✓ Saved', 'var(--green1)');
-  await logActivity(id ? 'grant_updated' : 'grant_added', { funder: rec.funder, stage: rec.stage });
-  closeGrantForm();
-  loadGrants();
+  try {
+    let resp;
+    if (id) resp = await sb.from('grants').update(rec).eq('id', id).select();
+    else    resp = await sb.from('grants').insert(rec).select();
+    if (resp.error) { setSt('Save failed: ' + resp.error.message, 'var(--pink)'); return; }
+    if (id && (!resp.data || !resp.data.length)) {
+      setSt('No row was updated — the record may have been removed, or you lack edit permission.', 'var(--pink)');
+      return;
+    }
+    setSt('✓ Saved', 'var(--green1)');
+    await logActivity(id ? 'grant_updated' : 'grant_added', { funder: rec.funder, stage: rec.stage });
+    closeGrantForm();
+    loadGrants();
+    if (typeof showToast === 'function') showToast(id ? 'Grant updated' : 'Grant added to pipeline');
+  } catch (e) {
+    setSt('Save error: ' + (e && e.message ? e.message : e), 'var(--pink)');
+    console.error('saveGrant failed:', e);
+  }
 }
 
 async function deleteGrant(id) {
