@@ -2056,6 +2056,21 @@ body.nav-open .sidebar { transform: translateX(0); }
 .grant-empty { font-size: 11.5px; color: var(--text-soft); padding: 8px 4px; font-style: italic; }
 .gfs-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-l); }
 .gfs-row:last-child { border-bottom: none; }
+.grant-note { font-size: 10.5px; color: var(--text-soft); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-l); line-height: 1.45; }
+.disc-card { background: rgba(28,33,48,0.02); border: 1px solid var(--border-l); border-radius: 10px; padding: 14px 16px; }
+.disc-type { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; display: inline-block; padding: 2px 8px; border-radius: 5px; margin-bottom: 8px; }
+.dt-foundation { background: rgba(156,24,120,0.1); color: var(--purple1); }
+.dt-federal { background: rgba(27,142,212,0.1); color: var(--cyan); }
+.dt-financial { background: rgba(240,180,0,0.13); color: #A87400; }
+.dt-community { background: rgba(0,176,162,0.1); color: var(--green1); }
+.disc-desc { font-size: 11.5px; color: var(--text-mid); line-height: 1.55; margin: 7px 0 10px; }
+.disc-actions { display: flex; gap: 6px; }
+.disc-btn { padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700; font-family: inherit; }
+.disc-qualify { background: var(--green1); border: none; color: #06241F; }
+.disc-archive { background: transparent; border: 1px solid rgba(28,33,48,0.2); color: var(--text-mid); }
+.disc-meta { font-size: 10.5px; color: var(--text-soft); white-space: nowrap; }
+.dlog-row { padding: 10px 0; border-bottom: 1px solid var(--border-l); }
+.dlog-row:last-child { border-bottom: none; padding-bottom: 0; }
 
 </style>
 </head>
@@ -3471,6 +3486,39 @@ body.nav-open .sidebar { transform: translateX(0); }
       <div style="color:var(--muted);font-size:12px;padding:8px 4px;">Loading grant pipeline…</div>
     </div>
 
+    <!-- Grant Discovery -->
+    <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:20px 24px;margin-bottom:14px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);font-weight:700;">Grant Discovery</div>
+          <div style="font-size:12px;color:var(--text-mid);margin-top:4px;line-height:1.5;">Curated foundation, federal &amp; community grant prospects aligned to MPact's focus areas. Qualify a prospect into the pipeline, or archive it with a note to refine future discovery.</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <select id="discoveryFilter" onchange="renderDiscovery()" style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.22);border-radius:8px;color:#1C2130;padding:7px 10px;font-size:12px;font-family:inherit;cursor:pointer;">
+            <option value="">All focus areas</option>
+            <option>Impact Investing</option>
+            <option>Catalytic Capital</option>
+            <option>Innovative Finance</option>
+            <option>Community Development Finance</option>
+            <option>Affordable Housing Finance</option>
+            <option>Inclusive Economy</option>
+            <option>Financial Inclusion</option>
+          </select>
+          <button id="discoverBtn" onclick="runDiscovery()" style="padding:8px 16px;background:rgba(27,142,212,0.12);border:1px solid rgba(27,142,212,0.3);color:var(--cyan);border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit;">🔍 Discover Grants</button>
+        </div>
+      </div>
+      <div id="discoveryBucket" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="grant-empty">Click &ldquo;Discover Grants&rdquo; to surface aligned prospects.</div>
+      </div>
+    </div>
+
+    <!-- Discovery Notes / Archive Log -->
+    <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:20px 24px;margin-bottom:14px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--pink);font-weight:700;margin-bottom:4px;">Discovery Notes · Archive Log</div>
+      <div style="font-size:11.5px;color:var(--text-soft);margin-bottom:12px;">Archived prospects and their notes — a running record of what was passed over and why.</div>
+      <div id="discoveryLog"></div>
+    </div>
+
     <!-- Outcomes by funder -->
     <div style="background:#FFFFFF;border:1px solid rgba(28,33,48,0.08);border-radius:14px;padding:20px 24px;margin-bottom:14px;box-shadow:0 2px 12px rgba(28,33,48,0.06);">
       <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--green1);font-weight:700;margin-bottom:12px;">Outcomes by Funder</div>
@@ -4842,6 +4890,8 @@ async function loadGrants() {
     grantsCache = data || [];
     renderGrantPipeline(grantsCache);
     renderGrantStats(grantsCache);
+    renderDiscovery();
+    renderDiscoveryLog();
   } catch (e) { console.error('loadGrants:', e); }
 }
 
@@ -4866,6 +4916,7 @@ function renderGrantPipeline(list) {
         + grDeadlineBadge(g.deadline)
         + '</div>'
         + (g.focus_area ? '<div style="margin-top:8px;"><span class="grant-tag">' + bmEsc(g.focus_area) + '</span></div>' : '')
+        + (g.notes ? '<div class="grant-note">' + bmEsc(g.notes) + '</div>' : '')
         + actions
         + '</div>';
     }).join('') : '<div class="grant-empty">No grants in this stage.</div>';
@@ -4878,7 +4929,7 @@ function renderGrantPipeline(list) {
 }
 
 function renderGrantStats(list) {
-  const active = list.filter(g => g.stage !== 'declined');
+  const active = list.filter(g => g.stage !== 'declined' && g.stage !== 'archived');
   const pipelineVal = list.filter(g => g.stage === 'research' || g.stage === 'application')
     .reduce((s, g) => s + (Number(g.amount) || 0), 0);
   const awardedVal = list.filter(g => g.stage === 'award' || g.stage === 'reporting')
@@ -4900,6 +4951,7 @@ function renderGrantStats(list) {
     if (!list.length) { el.innerHTML = '<div class="grant-empty">No grant prospects yet.</div>'; return; }
     const byFunder = {};
     list.forEach(g => {
+      if (g.stage === 'archived') return;
       const f = g.funder || '—';
       if (!byFunder[f]) byFunder[f] = { count: 0, requested: 0, awarded: 0 };
       byFunder[f].count++;
@@ -4991,6 +5043,147 @@ async function deleteGrant(id) {
   if (error) { alert('Failed to remove: ' + error.message); return; }
   await logActivity('grant_removed', { funder: g ? g.funder : id });
   loadGrants();
+}
+
+// ══════════════════════════════════════════════════════════════
+// GRANT DISCOVERY — curated catalog of aligned prospects
+// ══════════════════════════════════════════════════════════════
+const GRANT_CATALOG = [
+  { funder:'CDFI Fund (U.S. Treasury)', program:'CDFI Program — Financial Assistance', type:'Federal', focus:'Community Development Finance', amount:'$500K–$2M', desc:'Awards to certified CDFIs for lending capital, operations, and development services.' },
+  { funder:'CDFI Fund (U.S. Treasury)', program:'CDFI Bond Guarantee Program', type:'Federal', focus:'Community Development Finance', amount:'$10M+', desc:'Federal bond guarantees providing long-term, low-cost capital to CDFIs.' },
+  { funder:'U.S. SBA', program:'PRIME — Microenterprise Development', type:'Federal', focus:'Financial Inclusion', amount:'$50K–$250K', desc:'Grants for technical assistance and capacity building to microenterprise lenders.' },
+  { funder:'U.S. HUD', program:'Community Development Block Grant', type:'Federal', focus:'Inclusive Economy', amount:'Varies', desc:'Federal block grants for community and economic development activities.' },
+  { funder:'Federal Home Loan Bank of Atlanta', program:'Affordable Housing Program', type:'Federal', focus:'Affordable Housing Finance', amount:'$100K–$500K', desc:'Competitive grants subsidizing the development of affordable housing.' },
+  { funder:'MacArthur Foundation', program:'Catalytic Capital Consortium', type:'Foundation', focus:'Catalytic Capital', amount:'$100K–$500K', desc:'Catalytic capital grants and investments that unlock additional financing for impact.' },
+  { funder:'Ford Foundation', program:'Mission Investments (PRIs)', type:'Foundation', focus:'Impact Investing', amount:'$250K–$1M', desc:'Program-related investments into mission-aligned funds and intermediaries.' },
+  { funder:'The Rockefeller Foundation', program:'Innovative Finance Initiative', type:'Foundation', focus:'Innovative Finance', amount:'$150K–$500K', desc:'Support for new financing structures that mobilize private capital for impact.' },
+  { funder:'Kresge Foundation', program:'Social Investment Practice', type:'Foundation', focus:'Community Development Finance', amount:'$100K–$750K', desc:'Loans, guarantees, and grants for community development finance.' },
+  { funder:'W.K. Kellogg Foundation', program:'Mission-Driven Investments', type:'Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Investments advancing racial equity and economic mobility for families.' },
+  { funder:'The Heron Foundation', program:'Enterprise & Community Investing', type:'Foundation', focus:'Impact Investing', amount:'$50K–$300K', desc:'Full-endowment investing directed toward poverty reduction.' },
+  { funder:'Surdna Foundation', program:'Inclusive Economies', type:'Foundation', focus:'Inclusive Economy', amount:'$75K–$250K', desc:'Grants to build wealth and ownership in communities of color.' },
+  { funder:'Annie E. Casey Foundation', program:'Social Investment Fund', type:'Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Investments and grants for family economic stability and community development.' },
+  { funder:'Robert Wood Johnson Foundation', program:'Impact Investments', type:'Foundation', focus:'Impact Investing', amount:'$150K–$1M', desc:'Investments linking health, housing, and community finance.' },
+  { funder:'Mary Reynolds Babcock Foundation', program:'Building Economic Opportunity', type:'Foundation', focus:'Inclusive Economy', amount:'$50K–$150K', desc:'Grants helping families and communities move out of poverty across the U.S. South.' },
+  { funder:'JPMorgan Chase', program:'PRO Neighborhoods / Community Development', type:'Financial Institution', focus:'Community Development Finance', amount:'$250K–$1M', desc:'Capital and grants to CDFIs and community development partnerships.' },
+  { funder:'Wells Fargo Foundation', program:'Housing Access & Affordability', type:'Financial Institution', focus:'Affordable Housing Finance', amount:'$100K–$500K', desc:'Grants supporting affordable housing and homeownership access.' },
+  { funder:'Bank of America Charitable Foundation', program:'Economic Mobility', type:'Financial Institution', focus:'Inclusive Economy', amount:'$50K–$300K', desc:'Grants for workforce, housing stability, and community development finance.' },
+  { funder:'Citi Foundation', program:'Community Finance & Innovation', type:'Financial Institution', focus:'Financial Inclusion', amount:'$100K–$500K', desc:'Grants supporting financial inclusion and community development.' },
+  { funder:'Mastercard Center for Inclusive Growth', program:'Inclusive Growth Grants', type:'Financial Institution', focus:'Financial Inclusion', amount:'$100K–$500K', desc:'Grants and data tools advancing equitable economic growth.' },
+  { funder:'MetLife Foundation', program:'Financial Health', type:'Financial Institution', focus:'Financial Inclusion', amount:'$75K–$300K', desc:'Grants advancing financial health for low- and moderate-income people.' },
+  { funder:'Truist Foundation', program:'Economic Mobility', type:'Financial Institution', focus:'Inclusive Economy', amount:'$50K–$250K', desc:'Grants strengthening financial stability and small-business growth.' },
+  { funder:'Opportunity Finance Network', program:'Finance Justice Fund', type:'Financial Institution', focus:'Community Development Finance', amount:'$100K–$1M', desc:'Capital and grants channeled to CDFIs serving underinvested communities.' },
+  { funder:'Local Initiatives Support Corporation (LISC)', program:'Community Development Grants', type:'Community Foundation', focus:'Community Development Finance', amount:'$50K–$500K', desc:'Capital and grants for housing, small business, and community programs.' },
+  { funder:'Enterprise Community Partners', program:'Affordable Housing Capital', type:'Community Foundation', focus:'Affordable Housing Finance', amount:'$100K–$1M', desc:'Grants, loans, and equity for affordable housing development.' },
+  { funder:'Foundation For The Carolinas', program:'Community Grants', type:'Community Foundation', focus:'Inclusive Economy', amount:'$25K–$150K', desc:'Regional grants for economic opportunity across the Carolinas.' },
+  { funder:'Z. Smith Reynolds Foundation', program:'Inclusive Economy Grant', type:'Community Foundation', focus:'Inclusive Economy', amount:'$50K–$200K', desc:'North Carolina grants advancing an inclusive, equitable economy.' },
+  { funder:'Golden LEAF Foundation', program:'Economic Development Grants', type:'Community Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'North Carolina grants for economic development in rural and underserved areas.' },
+  { funder:'The Duke Endowment', program:'Community Development', type:'Community Foundation', focus:'Inclusive Economy', amount:'$100K–$500K', desc:'Grants across the Carolinas advancing community well-being.' },
+];
+
+function discTypeClass(t) {
+  return t === 'Federal' ? 'dt-federal'
+       : t === 'Financial Institution' ? 'dt-financial'
+       : t === 'Community Foundation' ? 'dt-community'
+       : 'dt-foundation';
+}
+
+function runDiscovery() { renderDiscovery(); }
+
+function renderDiscovery() {
+  const wrap = document.getElementById('discoveryBucket');
+  if (!wrap) return;
+  const isAdmin = !!(user && user.isSuperAdmin);
+  const filterEl = document.getElementById('discoveryFilter');
+  const filter = filterEl ? filterEl.value : '';
+  // Exclude catalog items already qualified or archived (in the grants table)
+  const decided = new Set(grantsCache.map(g => (g.funder || '') + '|' + (g.program || '')));
+  const items = GRANT_CATALOG
+    .map((c, i) => ({ c: c, i: i }))
+    .filter(o => !decided.has(o.c.funder + '|' + o.c.program))
+    .filter(o => !filter || o.c.focus === filter);
+  if (!items.length) {
+    wrap.innerHTML = '<div class="grant-empty">No new prospects' + (filter ? ' in this focus area' : '')
+      + '. Qualified and archived prospects are removed from discovery.</div>';
+    return;
+  }
+  wrap.innerHTML = items.map(o => {
+    const c = o.c;
+    const actions = isAdmin
+      ? '<div class="disc-actions">'
+        + '<button class="disc-btn disc-qualify" onclick="qualifyDiscovery(' + o.i + ')">Qualify →</button>'
+        + '<button class="disc-btn disc-archive" onclick="archiveDiscovery(' + o.i + ')">Archive</button>'
+        + '</div>'
+      : '';
+    return '<div class="disc-card">'
+      + '<span class="disc-type ' + discTypeClass(c.type) + '">' + bmEsc(c.type) + '</span>'
+      + '<div class="grant-funder">' + bmEsc(c.funder) + '</div>'
+      + '<div class="grant-program">' + bmEsc(c.program) + '</div>'
+      + '<div class="disc-desc">' + bmEsc(c.desc) + '</div>'
+      + '<div class="grant-card-row" style="margin-bottom:' + (isAdmin ? '10px' : '0') + ';">'
+      + '<span class="grant-tag">' + bmEsc(c.focus) + '</span>'
+      + '<span class="disc-meta">Est. ' + bmEsc(c.amount) + '</span>'
+      + '</div>' + actions + '</div>';
+  }).join('');
+}
+
+async function qualifyDiscovery(idx) {
+  if (!sb || !user) return;
+  const c = GRANT_CATALOG[idx];
+  if (!c) return;
+  const { error } = await sb.from('grants').insert({
+    funder: c.funder, program: c.program, focus_area: c.focus, amount: 0,
+    stage: 'research', notes: 'Qualified from Grant Discovery — ' + (c.desc || ''),
+    updated_at: new Date().toISOString(), updated_by: user.email,
+  });
+  if (error) { alert('Qualify failed: ' + error.message); return; }
+  await logActivity('grant_qualified', { funder: c.funder, focus: c.focus });
+  if (typeof showToast === 'function') showToast(c.funder + ' added to the pipeline');
+  loadGrants();
+}
+
+async function archiveDiscovery(idx) {
+  if (!sb || !user) return;
+  const c = GRANT_CATALOG[idx];
+  if (!c) return;
+  const note = prompt('Archive "' + c.funder + ' — ' + c.program + '".\nAdd a note on why (this refines future discovery):', '');
+  if (note === null) return;
+  const { error } = await sb.from('grants').insert({
+    funder: c.funder, program: c.program, focus_area: c.focus, amount: 0,
+    stage: 'archived', notes: note.trim() || 'Archived from discovery (no note).',
+    updated_at: new Date().toISOString(), updated_by: user.email,
+  });
+  if (error) { alert('Archive failed: ' + error.message); return; }
+  await logActivity('grant_archived', { funder: c.funder, focus: c.focus });
+  loadGrants();
+}
+
+function renderDiscoveryLog() {
+  const el = document.getElementById('discoveryLog');
+  if (!el) return;
+  const archived = grantsCache.filter(g => g.stage === 'archived');
+  if (!archived.length) {
+    el.innerHTML = '<div class="grant-empty">No archived prospects yet — archive notes will collect here to refine future discovery.</div>';
+    return;
+  }
+  const byFocus = {};
+  archived.forEach(g => { const f = g.focus_area || 'Other'; byFocus[f] = (byFocus[f] || 0) + 1; });
+  const chips = Object.keys(byFocus).sort().map(f =>
+    '<span class="grant-tag" style="margin:0 6px 6px 0;display:inline-block;">' + bmEsc(f) + ' · ' + byFocus[f] + '</span>'
+  ).join('');
+  const isAdmin = !!(user && user.isSuperAdmin);
+  const rows = archived.map(g => {
+    const restore = isAdmin
+      ? '<button class="disc-btn disc-archive" style="padding:3px 10px;font-size:10px;" onclick="deleteGrant(\'' + g.id + '\')">Restore</button>'
+      : '';
+    return '<div class="dlog-row">'
+      + '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">'
+      + '<div><span style="font-size:12.5px;font-weight:700;color:var(--text-dark);">' + bmEsc(g.funder) + '</span>'
+      + ' <span style="font-size:11px;color:var(--text-soft);">· ' + bmEsc(g.program || '') + '</span></div>'
+      + restore + '</div>'
+      + '<div style="font-size:11.5px;color:var(--text-mid);margin-top:4px;line-height:1.5;">' + bmEsc(g.notes || '') + '</div>'
+      + '</div>';
+  }).join('');
+  el.innerHTML = '<div style="margin-bottom:10px;">' + chips + '</div>' + rows;
 }
 
 // ══════════════════════════════════════════════════════════════
