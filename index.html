@@ -4944,6 +4944,7 @@ function openGrantForm(id) {
     val('gmStage', 'research'); val('gmFocus', ''); val('gmSort', grantsCache.length);
   }
   form.style.display = 'block';
+  form.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function closeGrantForm() {
