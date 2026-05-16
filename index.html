@@ -2094,7 +2094,7 @@ body.nav-open .sidebar { transform: translateX(0); }
       <span><span style="color:var(--pink);">M</span><span style="color:var(--cyan);">PACT</span></span>
       <span class="lp-nav-org">Mission Foundation</span>
     </div>
-    <button class="lp-authbtn" onclick="showAuthGate()">Authorized Users &rarr;</button>
+    <button class="lp-authbtn" id="lpAuthBtn" onclick="landingEnter()">Authorized Users &rarr;</button>
   </nav>
 
   <header class="lp-hero">
@@ -2356,6 +2356,7 @@ body.nav-open .sidebar { transform: translateX(0); }
       <div class="sync-dot" id="syncDot"></div>
       <span id="syncLabel" style="font-size:11px;">offline</span>
     </div>
+    <button class="admin-panel-btn" onclick="showLanding()" title="View the public landing page (stays signed in)">🌐 Public Site</button>
     <button class="admin-panel-btn" id="adminPanelBtn" onclick="openAdminPanel()">⚙ Admin</button>
     <div class="user-bar" id="userBar" style="display:none;">
       <div class="user-avatar" id="userAvatar"></div>
@@ -4426,9 +4427,22 @@ window.addEventListener('load', async () => {
 // ── Landing page <-> auth gate navigation ──
 function showLanding() {
   const lp = document.getElementById('landingPage');
-  if (lp) lp.style.display = 'block';
+  if (lp) { lp.style.display = 'block'; lp.scrollTop = 0; }
   const ag = document.getElementById('authGate');
   if (ag) { ag.classList.add('hidden'); ag.style.display = 'none'; }
+  // Context-aware landing button: signed-in users return to the dashboard
+  const btn = document.getElementById('lpAuthBtn');
+  if (btn) btn.textContent = user ? 'Enter Dashboard →' : 'Authorized Users →';
+}
+
+// Landing nav button — signed in: back to dashboard; signed out: sign-in gate
+function landingEnter() {
+  if (user) {
+    const lp = document.getElementById('landingPage');
+    if (lp) lp.style.display = 'none';
+  } else {
+    showAuthGate();
+  }
 }
 
 function showAuthGate() {
