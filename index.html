@@ -4398,6 +4398,15 @@ let userRole = 'observer';
 let syncInterval = null;
 let realtimeChan = null;
 
+// Process the session exactly once, whether it arrives via getSession()
+// or the onAuthStateChange listener (prevents the OAuth-redirect race).
+let authHandled = false;
+async function handleSession(session) {
+  if (!session || authHandled) return;
+  authHandled = true;
+  await onAuthSuccess(session);
+}
+
 window.addEventListener('load', async () => {
   // No backend configured yet — show setup notice in auth gate
   if (!sb) {
@@ -4409,19 +4418,32 @@ window.addEventListener('load', async () => {
     return;
   }
 
-  // Check existing session (handles OAuth redirect callback automatically)
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    await onAuthSuccess(session);
-  } else {
-    showLanding();
+  // Register the auth listener FIRST, so the OAuth-redirect SIGNED_IN
+  // event is never missed during the getSession() await.
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_OUT') { authHandled = false; location.reload(); return; }
+    if (session) await handleSession(session);
+  });
+
+  // Direct session check — covers an already-established session.
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) { await handleSession(session); }
+    else if (!authHandled) { showLanding(); }
+  } catch (e) {
+    console.error('Session check failed:', e);
+    if (!authHandled) showLanding();
   }
 
-  // Listen for future auth changes (sign-in, sign-out, token refresh)
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session)  await onAuthSuccess(session);
-    if (event === 'SIGNED_OUT')            location.reload();
-  });
+  // Safety net — if a redirect race left a valid session unhandled,
+  // re-check shortly and recover automatically (no hard refresh needed).
+  setTimeout(async () => {
+    if (authHandled || !sb) return;
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) await handleSession(session);
+    } catch (e) { /* ignore */ }
+  }, 1800);
 });
 
 // ── Landing page <-> auth gate navigation ──
